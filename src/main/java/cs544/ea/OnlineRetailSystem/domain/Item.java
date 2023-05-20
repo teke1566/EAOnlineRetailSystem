@@ -16,7 +16,7 @@ public class Item {
     private String name;
     private String description;
     private double price;
-    private String image;//serialized string
+    private String image;//serialized strings
     private String barcode;
     private Integer quantityInStock;
     @OneToMany
