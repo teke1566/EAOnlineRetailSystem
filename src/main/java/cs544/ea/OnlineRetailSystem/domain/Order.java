@@ -7,13 +7,16 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OrderColumn;
+import jakarta.persistence.Table;
 import lombok.Data;
 
 @Data
 @Entity
+@Table(name = "Order")
 public class Order {
 	
 	@Id
@@ -24,10 +27,12 @@ public class Order {
 	@ManyToOne
 	private Customer customer;
 	
-	@Column(name = "shippingAddress")
-	private Address shipping;
+	@ManyToOne
+	@JoinColumn(name = "shippingAddressId")
+	private Address shippingAddress;
 	
 	@OneToMany
+	@JoinColumn(name = "lineItemId")
 	@OrderColumn(name = "sequence")
 	private List<LineItem> lineItems;
 	
