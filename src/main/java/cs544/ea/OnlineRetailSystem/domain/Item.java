@@ -13,11 +13,17 @@ public class Item {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long itemId;
+    @Column(name = "name")
     private String name;
+    @Column(name = "description")
     private String description;
+    @Column(name = "price")
     private double price;
+    @Column(name = "image")
     private String image;//serialized string
+    @Column(name = "barcode")
     private String barcode;
+    @Column(name = "quantityinstock")
     private Integer quantityInStock;
     @OneToMany
     @JoinColumn(name = "reviewId")
