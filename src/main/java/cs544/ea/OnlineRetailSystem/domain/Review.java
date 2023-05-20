@@ -2,12 +2,7 @@ package cs544.ea.OnlineRetailSystem.domain;
 
 import java.time.LocalDateTime;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Data;
 
 @Entity
@@ -34,4 +29,8 @@ public class Review {
 	
 	@ManyToOne
 	private Customer reviewer;
+
+	@ManyToOne
+	@JoinColumn(name = "itemId")
+	private Item item;
 }

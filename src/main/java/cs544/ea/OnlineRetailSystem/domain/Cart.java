@@ -27,6 +27,6 @@ public class Cart {
 	
 	@OneToMany
 	@JoinColumn(name = "lineItemId")
-	@OrderColumn(name = "sequence")
+	//@OrderColumn(name = "sequence")
 	private List<LineItem> lineItems;
 }

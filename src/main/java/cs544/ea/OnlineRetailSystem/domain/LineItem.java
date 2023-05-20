@@ -1,12 +1,6 @@
 package cs544.ea.OnlineRetailSystem.domain;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Data;
 
 @Data
@@ -28,4 +22,14 @@ public class LineItem {
 	
 	@Column(name = "discount")
 	private double discount;
+
+//	//newly added attributes
+//	@ManyToOne
+//	@JoinColumn(name = "cartId")
+//	private Cart cart;
+//
+//	@ManyToOne
+//	@JoinColumn(name = "orderId")
+//	private Order order;
+
 }
