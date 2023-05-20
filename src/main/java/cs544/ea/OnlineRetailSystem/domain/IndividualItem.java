@@ -1,4 +1,9 @@
 package cs544.ea.OnlineRetailSystem.domain;
 
-public class IndividualItem {
+import jakarta.persistence.Entity;
+import lombok.Data;
+
+@Entity
+@Data
+public class IndividualItem extends Item {
 }
