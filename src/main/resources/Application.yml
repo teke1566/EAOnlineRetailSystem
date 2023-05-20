@@ -2,7 +2,7 @@ spring:
   application:
     name: postgres
   datasource:
-    password: admin
+    password: 1
     url: jdbc:postgresql://localhost:5432/mydb
     username: postgres
   jpa:
@@ -21,4 +21,4 @@ spring:
 server:
 
 
-  port: 8080
+  port: 9090

@@ -25,8 +25,11 @@ public class Item {
     private String barcode;
     @Column(name = "quantityinstock")
     private Integer quantityInStock;
-    @OneToMany
-    @JoinColumn(name = "reviewId")
+//    @OneToMany
+//    private List<Review> reviews;
+    @OneToMany(mappedBy = "item")
     private List<Review> reviews;
 
+
 }
+
