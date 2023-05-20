@@ -1,6 +1,7 @@
 package cs544.ea.OnlineRetailSystem.domain;
 
 import jakarta.persistence.*;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
