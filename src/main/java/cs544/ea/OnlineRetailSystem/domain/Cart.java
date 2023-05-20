@@ -2,6 +2,7 @@ package cs544.ea.OnlineRetailSystem.domain;
 
 import java.util.List;
 
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

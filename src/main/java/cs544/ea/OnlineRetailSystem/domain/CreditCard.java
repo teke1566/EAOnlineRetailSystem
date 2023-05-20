@@ -25,4 +25,5 @@ public class CreditCard {
 	
 	@Column(name = "securityCode")
 	private String securityCode;
+
 }
