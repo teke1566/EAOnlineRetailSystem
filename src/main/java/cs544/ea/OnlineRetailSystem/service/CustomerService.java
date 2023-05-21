@@ -13,7 +13,7 @@ public interface CustomerService {
 
     public User getCustomerById(Long customerId);
 
-    public List<User> getAllCustomer();
+    public List<User> getAllCustomers();
 
     public void deleteCustomerById(Long customerId);
 
@@ -22,12 +22,13 @@ public interface CustomerService {
     //CreditCard
 
     public CreditCard addCreditCard(CreditCard creditCard);
+    public CreditCard getCreditCardById(Long creditCardId);
 
     public void deleteCreditCardById(Long creditCardId);
 
     public CreditCard updateCreditCard(Long creditCardId, CreditCard creditCard);
 
-    public List<CreditCard> getAllCreditCard();
+    public List<CreditCard> getAllCreditCards();
 
     //ShippingAddress
 
