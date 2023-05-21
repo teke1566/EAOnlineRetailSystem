@@ -25,11 +25,12 @@ public class Item {
     private String barcode;
     @Column(name = "quantityinstock")
     private Integer quantityInStock;
-//    @OneToMany
-//    private List<Review> reviews;
-    @OneToMany(mappedBy = "item")
+
+    @OneToMany
+    @JoinColumn(name = "itemId")
     private List<Review> reviews;
 
-
+    @ManyToOne //Many item can be owned by one merchant
+    private User merchant;
 }
 

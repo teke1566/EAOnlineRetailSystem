@@ -7,19 +7,23 @@ import java.util.List;
 
 @Entity
 @Data
-public class Customer {
+@Table(name = "users")
+public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long customerId;
+    private Long userId;
     private String firstName;
     private String lastName;
     private String emailAddress;
     @OneToOne
     private Address billingAddress;
     @OneToMany
-    @JoinColumn(name = "shippingaddressId")
+    @JoinColumn(name = "userShippingAddressId")
     private List<Address> shippingAddresses;
     @OneToMany
-    @JoinColumn(name = "creditCardId")
+    @JoinColumn(name = "userCreditCardId")
     private List<CreditCard> creditCards;
+
+    @Enumerated
+    private Roles roles;
 }
