@@ -2,14 +2,12 @@ package cs544.ea.OnlineRetailSystem.domain;
 
 import java.time.LocalDate;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Data;
 
 @Data
 @Entity
+@Table(name = "creditcard")
 public class CreditCard {
 	
 	@Id

@@ -10,28 +10,26 @@ import lombok.Data;
 @Entity
 @Table(name = "orderTable")
 public class Order {
-	
 	@Id
-	@GeneratedValue
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "orderId")
-	private int id;
+	private Long id;
 	
 	@ManyToOne
-	private Customer customer;
+	private User customer;
 	
 	@ManyToOne
 	@JoinColumn(name = "shippingAddressId")
 	private Address shippingAddress;
-	
-	@OneToMany
-	@JoinColumn(name = "lineItemId")
-	//@OrderColumn(name = "sequence")
-	private List<LineItem> lineItems;
-	
+
 	@Column(name = "OrderStatus")
 	@Enumerated
 	private OrderStatus status;
 	
 	@Column(name = "orderDate")
 	private LocalDateTime orderDate;
+
+	@OneToMany
+	@JoinColumn(name = "orderId")
+	private List<LineItem> lineItems;
 }
