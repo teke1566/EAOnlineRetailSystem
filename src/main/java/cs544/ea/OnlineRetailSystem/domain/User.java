@@ -14,6 +14,7 @@ public class User {
     private Long userId;
     private String firstName;
     private String lastName;
+    private String password;
     private String emailAddress;
     @OneToOne
     private Address billingAddress;
