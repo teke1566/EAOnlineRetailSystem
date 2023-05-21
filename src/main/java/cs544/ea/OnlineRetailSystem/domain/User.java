@@ -2,14 +2,8 @@ package cs544.ea.OnlineRetailSystem.domain;
 
 import jakarta.persistence.*;
 import lombok.Data;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 
-import java.io.Serializable;
-import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Entity
 @Data
@@ -17,16 +11,20 @@ import java.util.stream.Collectors;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
-
-    private String name;
-    @Column(nullable = false, unique = true)
-    private String email;
-
-    @Column(nullable = false)
+    private Long userId;
+    private String firstName;
+    private String lastName;
     private String password;
-    @ManyToMany(fetch = FetchType.EAGER)
-    private List<Role> role;
+    private String emailAddress;
+    @OneToOne
+    private Address billingAddress;
+    @OneToMany
+    @JoinColumn(name = "userShippingAddressId")
+    private List<Address> shippingAddresses;
+    @OneToMany
+    @JoinColumn(name = "userCreditCardId")
+    private List<CreditCard> creditCards;
 
-
+    @Enumerated
+    private Roles roles;
 }

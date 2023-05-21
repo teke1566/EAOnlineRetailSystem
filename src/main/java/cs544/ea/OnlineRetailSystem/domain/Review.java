@@ -7,13 +7,13 @@ import lombok.Data;
 
 @Entity
 @Data
-@Table(name = "Review")
+@Table(name = "review")
+//only buyers of an item can review the item.order status have to be DELIVERED
 public class Review {
-	
 	@Id
 	@GeneratedValue
 	@Column(name = "reviewId")
-	private int id;
+	private Long id;
 	
 	@Column(name = "title")
 	private String title;
@@ -21,16 +21,13 @@ public class Review {
 	@Column(name = "description")
 	private String description;
 	
-	@Column(name = "numberOfStar")
-	private int numberOfStar;
+	@Column(name = "numberOfStars")
+	private int numberOfStars;
 	
 	@Column(name = "reviewDate")
 	private LocalDateTime reviewDate;
 	
 	@ManyToOne
-	private Customer reviewer;
+	private User buyer;
 
-	@ManyToOne
-	@JoinColumn(name = "itemId")
-	private Item item;
 }
