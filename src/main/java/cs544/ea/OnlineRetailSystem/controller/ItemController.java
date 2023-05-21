@@ -1,4 +1,51 @@
 package cs544.ea.OnlineRetailSystem.controller;
 
+import cs544.ea.OnlineRetailSystem.domain.Item;
+import cs544.ea.OnlineRetailSystem.service.ItemService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/item")
 public class ItemController {
+
+    private final ItemService itemService;
+
+    @Autowired
+    public ItemController(ItemService itemService) {
+        this.itemService = itemService;
+    }
+
+    @GetMapping
+    public List<Item> getAllItems(){
+        return itemService.getAllItems();
+    }
+
+    @GetMapping("/{itemId}")
+    public Item getItemById(@PathVariable Long itemId){
+        return itemService.getItemById(itemId);
+    }
+
+    @PostMapping
+    public Item addItem(@RequestBody Item item){
+        return itemService.addItem(item);
+    }
+
+    @PutMapping("/{itemId}")
+    public Item updateItem(@PathVariable Long itemId, @RequestBody Item item){
+        return itemService.updateItem(itemId, item);
+    }
+
+    @DeleteMapping("/{itemId}")
+    public void deleteItem(@PathVariable Long itemId){
+        itemService.deleteItem(itemId);
+    }
+
+    @GetMapping("/search")
+    public List<Item> searchItems(@RequestParam String Keyword){
+        return itemService.searchItems(Keyword);
+    }
+
 }
