@@ -16,7 +16,7 @@ public class LineItem {
 	@Column(name = "lineItemId")
 	private Long lineItemId;
 
-	@OneToOne
+	@ManyToOne //one item can be sold many times
 	@JoinColumn(name = "itemId")
 	private Item item;
 
