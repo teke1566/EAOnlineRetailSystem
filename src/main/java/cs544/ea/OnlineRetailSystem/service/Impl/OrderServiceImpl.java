@@ -13,8 +13,10 @@ import cs544.ea.OnlineRetailSystem.domain.Order;
 import cs544.ea.OnlineRetailSystem.domain.OrderStatus;
 import cs544.ea.OnlineRetailSystem.repository.OrderRepository;
 import cs544.ea.OnlineRetailSystem.service.OrderService;
+import jakarta.transaction.Transactional;
 
 @Service
+@Transactional
 public class OrderServiceImpl implements OrderService {
 	
 	@Autowired
