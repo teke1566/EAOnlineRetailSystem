@@ -3,6 +3,7 @@ package cs544.ea.OnlineRetailSystem.service.Impl;
 import cs544.ea.OnlineRetailSystem.domain.Address;
 import cs544.ea.OnlineRetailSystem.domain.CreditCard;
 import cs544.ea.OnlineRetailSystem.domain.User;
+import cs544.ea.OnlineRetailSystem.repository.CreditCardRepository;
 import cs544.ea.OnlineRetailSystem.repository.CustomerRepository;
 import cs544.ea.OnlineRetailSystem.service.CustomerService;
 import org.springframework.beans.BeanUtils;
@@ -16,9 +17,11 @@ import java.util.Optional;
 public class CustomerServiceImpl implements CustomerService {
 
     private final CustomerRepository customerRepository;
+    private final CreditCardRepository creditCardRepository;
 
-    public CustomerServiceImpl(CustomerRepository customerRepository) {
+    public CustomerServiceImpl(CustomerRepository customerRepository,CreditCardRepository creditCardRepository) {
         this.customerRepository = customerRepository;
+        this.creditCardRepository= creditCardRepository;
     }
 
     @Override
@@ -33,7 +36,7 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public List<User> getAllCustomer() {
+    public List<User> getAllCustomers() {
         return customerRepository.findAll();
     }
 
@@ -54,22 +57,32 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public CreditCard addCreditCard(CreditCard creditCard) {
-        return null;
+        return creditCardRepository.save(creditCard);
     }
+    public CreditCard getCreditCardById(Long creditCardId){
+        Optional<CreditCard> creditCard= creditCardRepository.findById(creditCardId);
+        return creditCard.orElse(null);
+    }
+
 
     @Override
     public void deleteCreditCardById(Long creditCardId) {
-
+     creditCardRepository.deleteById(creditCardId);
     }
 
     @Override
     public CreditCard updateCreditCard(Long creditCardId, CreditCard creditCard) {
+        CreditCard existingCreditCard = getCreditCardById(creditCardId);
+        if(existingCreditCard != null) {
+            BeanUtils.copyProperties(creditCard, existingCreditCard);//copy file from new to existing object
+            return creditCardRepository.save(existingCreditCard);
+        }
         return null;
     }
 
     @Override
-    public List<CreditCard> getAllCreditCard() {
-        return null;
+    public List<CreditCard> getAllCreditCards() {
+        return creditCardRepository.findAll();
     }
 
     @Override
