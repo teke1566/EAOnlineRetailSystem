@@ -1,18 +1,31 @@
 package cs544.ea.OnlineRetailSystem.controller;
 
+import java.util.List;
+
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import cs544.ea.OnlineRetailSystem.domain.dto.response.OrderResponse;
 import cs544.ea.OnlineRetailSystem.domain.Address;
 import cs544.ea.OnlineRetailSystem.domain.CreditCard;
 import cs544.ea.OnlineRetailSystem.domain.User;
 import cs544.ea.OnlineRetailSystem.service.CustomerService;
-import org.springframework.web.bind.annotation.*;
-import java.util.List;
+import cs544.ea.OnlineRetailSystem.service.OrderService;
 
 @RestController
 @RequestMapping("/api/v1/customer")
 public class CustomerController {
     private final CustomerService customerService;
-    public CustomerController(CustomerService customerService){
+    private final OrderService orderService;
+    public CustomerController(CustomerService customerService, OrderService orderService){
         this.customerService = customerService;
+        this.orderService = orderService;
     }
 
     @GetMapping("/")
@@ -59,8 +72,8 @@ public class CustomerController {
     public void deleteCreditCardById(@PathVariable Long creditCardId){
         customerService.deleteCreditCardById(creditCardId);
     }
+    
     // Shipping Address:
-
     @PostMapping("/shippingAddress/add-new-address")
     public Address addShippingAddress(@RequestBody Address address) {
         return customerService.addShippingAddress(address);
@@ -101,5 +114,11 @@ public class CustomerController {
     @GetMapping("/billingAddresses")
     public List<Address> getAllBillingAddresses() {
         return customerService.getAllBillingAddress();
+    }
+    
+    //Orders
+    @GetMapping("/{customerId}/orders")
+    public List<OrderResponse> getOrdersByCustomerId(@PathVariable Long customerId) {
+    	return orderService.getOrdersByUserId(customerId);
     }
 }
