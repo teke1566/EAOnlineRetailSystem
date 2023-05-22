@@ -1,4 +1,4 @@
-package cs544.ea.OnlineRetailSystem.DTO;
+package cs544.ea.OnlineRetailSystem.domain.dto.response;
 
 import java.util.List;
 
@@ -16,4 +16,3 @@ public class ItemResponse {
     private List<ReviewResponse> reviews;
     private UserResponse merchant;
 }
-

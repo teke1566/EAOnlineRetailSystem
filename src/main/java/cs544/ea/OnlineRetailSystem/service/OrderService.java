@@ -2,8 +2,8 @@ package cs544.ea.OnlineRetailSystem.service;
 
 import java.util.List;
 
-import cs544.ea.OnlineRetailSystem.DTO.OrderResponse;
 import cs544.ea.OnlineRetailSystem.domain.Order;
+import cs544.ea.OnlineRetailSystem.domain.dto.response.OrderResponse;
 
 public interface OrderService {
 	

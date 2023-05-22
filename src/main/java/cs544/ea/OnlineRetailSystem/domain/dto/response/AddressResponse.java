@@ -1,4 +1,4 @@
-package cs544.ea.OnlineRetailSystem.DTO;
+package cs544.ea.OnlineRetailSystem.domain.dto.response;
 
 import cs544.ea.OnlineRetailSystem.domain.AddressType;
 import lombok.Data;

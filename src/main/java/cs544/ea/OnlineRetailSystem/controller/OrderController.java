@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import cs544.ea.OnlineRetailSystem.DTO.OrderResponse;
 import cs544.ea.OnlineRetailSystem.domain.Order;
+import cs544.ea.OnlineRetailSystem.domain.dto.response.OrderResponse;
 import cs544.ea.OnlineRetailSystem.service.OrderService;
 
 @RestController

@@ -8,9 +8,9 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import cs544.ea.OnlineRetailSystem.DTO.OrderResponse;
 import cs544.ea.OnlineRetailSystem.domain.Order;
 import cs544.ea.OnlineRetailSystem.domain.OrderStatus;
+import cs544.ea.OnlineRetailSystem.domain.dto.response.OrderResponse;
 import cs544.ea.OnlineRetailSystem.repository.OrderRepository;
 import cs544.ea.OnlineRetailSystem.service.OrderService;
 import jakarta.transaction.Transactional;

@@ -1,4 +1,4 @@
-package cs544.ea.OnlineRetailSystem.DTO;
+package cs544.ea.OnlineRetailSystem.domain.dto.response;
 
 import java.time.LocalDateTime;
 import java.util.List;
