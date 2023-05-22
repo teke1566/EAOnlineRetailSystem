@@ -4,7 +4,7 @@ import cs544.ea.OnlineRetailSystem.domain.Item;
 import cs544.ea.OnlineRetailSystem.domain.Review;
 import cs544.ea.OnlineRetailSystem.repository.ItemRepository;
 import cs544.ea.OnlineRetailSystem.service.ItemService;
-import cs544.ea.OnlineRetailSystem.service.ReviewRepository;
+import cs544.ea.OnlineRetailSystem.repository.ReviewRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
