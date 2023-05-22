@@ -1,5 +1,6 @@
 package cs544.ea.OnlineRetailSystem.controller;
 
+import cs544.ea.OnlineRetailSystem.domain.Address;
 import cs544.ea.OnlineRetailSystem.domain.CreditCard;
 import cs544.ea.OnlineRetailSystem.domain.User;
 import cs544.ea.OnlineRetailSystem.service.CustomerService;
@@ -59,5 +60,47 @@ public class CustomerController {
     public void deleteCreditCardById(@PathVariable Long creditCardId){
         customerService.deleteCreditCardById(creditCardId);
     }
+    // Shipping Address:
 
+    @PostMapping("/shippingAddress/add-new-address")
+    public Address addShippingAddress(@RequestBody Address address) {
+        return customerService.addShippingAddress(address);
+    }
+
+    @PutMapping("/shippingAddress/update-address/{shippingAddressId}")
+    public Address updateShippingAddress(@PathVariable Long shippingAddressId, @RequestBody Address address) {
+        return customerService.updateShippingAddress(shippingAddressId, address);
+    }
+
+    @DeleteMapping("/shippingAddress/delete-address/{shippingAddressId}")
+    public void deleteShippingAddress(@PathVariable Long shippingAddressId) {
+        customerService.deleteShippingAddressById(shippingAddressId);
+    }
+
+    @GetMapping("/shippingAddresses")
+    public List<Address> getAllShippingAddresses() {
+        return customerService.getAllShippingAddress();
+    }
+
+    // Billing Address:
+
+    @PostMapping("/billingAddress/add-new-address")
+    public Address addBillingAddress(@RequestBody Address address) {
+        return customerService.addBillingAddress(address);
+    }
+
+    @PutMapping("/billingAddress/update-address/{billingAddressId}")
+    public Address updateBillingAddress(@PathVariable Long billingAddressId, @RequestBody Address address) {
+        return customerService.updateBillingAddress(billingAddressId, address);
+    }
+
+    @DeleteMapping("/billingAddress/delete-address/{billingAddressId}")
+    public void deleteBillingAddress(@PathVariable Long billingAddressId) {
+        customerService.deleteBillingAddressById(billingAddressId);
+    }
+
+    @GetMapping("/billingAddresses")
+    public List<Address> getAllBillingAddresses() {
+        return customerService.getAllBillingAddress();
+    }
 }
