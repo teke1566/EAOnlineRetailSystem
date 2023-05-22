@@ -46,6 +46,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests()
 
                 .requestMatchers("/api/v1/authenticate/**").permitAll()
+                .requestMatchers("/api/v1/customer/*").permitAll()
+
                 .requestMatchers(HttpMethod.GET,"/api/v1/items/*").hasAnyAuthority(Roles.CUSTOMER.name())
 
   .anyRequest()
