@@ -1,9 +1,7 @@
 package cs544.ea.OnlineRetailSystem.service.Impl;
 
 import cs544.ea.OnlineRetailSystem.domain.Item;
-import cs544.ea.OnlineRetailSystem.domain.Review;
 import cs544.ea.OnlineRetailSystem.repository.ItemRepository;
-import cs544.ea.OnlineRetailSystem.repository.ReviewRepository;
 import cs544.ea.OnlineRetailSystem.service.ItemService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,12 +12,9 @@ import java.util.List;
 public class ItemServiceImpl implements ItemService {
 
     private final ItemRepository itemRepository;
-    private final ReviewRepository reviewRepository; // Instance of Review Repository
-
     @Autowired
-    public ItemServiceImpl(ItemRepository itemRepository, ReviewRepository reviewRepository) {
+    public ItemServiceImpl(ItemRepository itemRepository) {
         this.itemRepository = itemRepository;
-        this.reviewRepository = reviewRepository;
     }
 
     @Override
@@ -62,15 +57,4 @@ public class ItemServiceImpl implements ItemService {
     public List<Item> searchItems(String Keyword) {
         return itemRepository.findByNameContainingIgnoreCase(Keyword);
     }
-
-    public Review addReview(Long itemId, Review review) {
-        Item item = getItemById(itemId);
-        review.setItem(item); // Set the item of the review
-        return reviewRepository.save(review); // Save and return the review
-    }
-
-    public List<Review> getReviewByItemId(Long itemId) {
-        return reviewRepository.findByItemId(itemId); // Return reviews by item id
-    }
-
 }
