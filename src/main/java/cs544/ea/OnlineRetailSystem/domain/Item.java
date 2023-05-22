@@ -26,8 +26,7 @@ public class Item {
     @Column(name = "quantityinstock")
     private Integer quantityInStock;
 
-    @OneToMany
-    @JoinColumn(name = "itemId")
+    @OneToMany(mappedBy = "item")
     private List<Review> reviews;
 
     @ManyToOne //Many item can be owned by one merchant
