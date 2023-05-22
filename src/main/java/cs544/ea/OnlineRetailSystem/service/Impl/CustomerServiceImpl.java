@@ -4,7 +4,7 @@ import cs544.ea.OnlineRetailSystem.domain.Address;
 import cs544.ea.OnlineRetailSystem.domain.CreditCard;
 import cs544.ea.OnlineRetailSystem.domain.User;
 import cs544.ea.OnlineRetailSystem.repository.CreditCardRepository;
-import cs544.ea.OnlineRetailSystem.repository.CustomerRepository;
+import cs544.ea.OnlineRetailSystem.repository.UserRepository;
 import cs544.ea.OnlineRetailSystem.service.CustomerService;
 import org.springframework.beans.BeanUtils;
 //org.springframework.beans.BeanUtils.copyProperties(Object source, Object target)
@@ -16,10 +16,10 @@ import java.util.Optional;
 @Service
 public class CustomerServiceImpl implements CustomerService {
 
-    private final CustomerRepository customerRepository;
+    private final UserRepository customerRepository;
     private final CreditCardRepository creditCardRepository;
 
-    public CustomerServiceImpl(CustomerRepository customerRepository,CreditCardRepository creditCardRepository) {
+    public CustomerServiceImpl(UserRepository customerRepository,CreditCardRepository creditCardRepository) {
         this.customerRepository = customerRepository;
         this.creditCardRepository= creditCardRepository;
     }
