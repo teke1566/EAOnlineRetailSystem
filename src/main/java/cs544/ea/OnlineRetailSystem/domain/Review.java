@@ -30,4 +30,8 @@ public class Review {
 	@ManyToOne
 	private User buyer;
 
+	@ManyToOne
+	@JoinColumn(name = "itmeId")
+	private Item item;
+
 }
