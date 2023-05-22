@@ -1,16 +1,19 @@
 spring:
   application:
-    name: postgres
+    name: OnlineRetailSystem
   datasource:
-    password: admin
-    url: jdbc:postgresql://localhost:5432/mydb
-    username: naodmengis
+    url: jdbc:sqlserver://cs544.cs.miu.edu:1433;databaseName=CS544-202305-04;trustServerCertificate=true
+    username: CS544-202305-04
+    password: 42c67741
+    driverClassName: com.microsoft.sqlserver.jdbc.SQLServerDriver
+    hikari:
+      maximumPoolSize: 10
   jpa:
     hibernate:
       ddl-auto: create-drop
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
+        dialect: org.hibernate.dialect.SQLServerDialect
         format_sql: true
     show-sql: true
     defer-datasource-initialization: true
@@ -19,6 +22,4 @@ spring:
     init:
       mode: always
 server:
-
-
   port: 9099
