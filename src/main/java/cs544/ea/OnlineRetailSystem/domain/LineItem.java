@@ -28,6 +28,7 @@ public class LineItem {
 
 	//newly added Bidirectional relation with cart
 
-	@ManyToOne
+	@ManyToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "cart_id")
 	private Cart cart;
 }
