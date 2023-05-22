@@ -19,8 +19,7 @@ public class Cart {
 	@OneToOne
 	private User customer;
 
-	@OneToMany
-	@JoinColumn(name = "cartId")
+	@OneToMany(mappedBy = "cart")
 	private List<LineItem> lineItems;
 
 
