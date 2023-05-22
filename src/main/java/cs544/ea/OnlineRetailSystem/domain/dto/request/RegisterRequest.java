@@ -16,7 +16,7 @@ public class RegisterRequest {
     @NotBlank(message = "name is Required")
     private String name;
 
-    @NotBlank(message = "isOwner property is Required")
+    @NotBlank(message = "isOwner  is Required")
 
     private Boolean isOwner;
 }

@@ -14,13 +14,13 @@ import java.util.stream.Collectors;
 
 public class AwesomeUserDetails implements UserDetails {
 
-    private String email;
+    private String emailAddress;
     @JsonIgnore
     private String password;
     private List<Role> roles;
 
     public AwesomeUserDetails(User user) {
-        this.email = user.getEmail();
+        this.emailAddress = user.getEmail();
         this.password = user.getPassword();
         this.roles = user.getRole();
     }
@@ -40,7 +40,7 @@ public class AwesomeUserDetails implements UserDetails {
 
     @Override
     public String getUsername() {
-        return email;
+        return emailAddress;
     }
 
     @Override

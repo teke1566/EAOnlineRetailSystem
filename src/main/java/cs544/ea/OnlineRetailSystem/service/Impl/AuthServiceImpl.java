@@ -74,10 +74,11 @@ public class AuthServiceImpl implements AuthService {
         try {
             User user = modelMapper.map(registerRequest, User.class);
             user.setName(Optional.ofNullable(registerRequest.getName()).orElse("Default Name"));
-            Roles roleValue = registerRequest.getIsOwner() ? Roles.VIEWER : Roles.CUSTOMER;
+            Roles roleValue = registerRequest.getIsOwner() ? Roles.MERCHANT : Roles.CUSTOMER;
             Role role = roleRepo.findByRole(roleValue);
             user.setRole(Collections.singletonList(role));
             user.setPassword(bCryptPasswordEncoder.encode(registerRequest.getPassword()));
+
             userRepo.save(user);
         } catch (Exception e) {
             throw new RuntimeException(e);

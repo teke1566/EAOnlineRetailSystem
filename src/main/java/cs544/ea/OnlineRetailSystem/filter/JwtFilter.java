@@ -1,6 +1,5 @@
 package cs544.ea.OnlineRetailSystem.filter;
 
-
 import cs544.ea.OnlineRetailSystem.util.JwtUtil;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;

@@ -1,7 +1,6 @@
 package cs544.ea.OnlineRetailSystem.config;
 
 
-
 import cs544.ea.OnlineRetailSystem.domain.Roles;
 import cs544.ea.OnlineRetailSystem.filter.JwtFilter;
 import lombok.RequiredArgsConstructor;
@@ -42,17 +41,14 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
-                http
-                .csrf().disable().cors()
-                .and()
-                .authorizeRequests()
+        http
+                .csrf().disable().cors().and()
+                .authorizeHttpRequests()
+
                 .requestMatchers("/api/v1/authenticate/**").permitAll()
-                .requestMatchers(HttpMethod.GET,"/api/v1/users").hasAuthority(Roles.ADMIN.name())
+                .requestMatchers(HttpMethod.GET,"/api/v1/items/*").hasAnyAuthority(Roles.CUSTOMER.name())
 
-                .requestMatchers(HttpMethod.GET, "/api/v1/properties/**").permitAll()
-
-                .requestMatchers(HttpMethod.PUT, "/api/v1/admin/**").hasAuthority(Roles.ADMIN.name())
-                .anyRequest()
+  .anyRequest()
                 .authenticated()
                 .and()
                 .sessionManagement()
