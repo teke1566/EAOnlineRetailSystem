@@ -1,6 +1,7 @@
 package cs544.ea.OnlineRetailSystem.service.Impl;
 
 import cs544.ea.OnlineRetailSystem.domain.Item;
+import cs544.ea.OnlineRetailSystem.domain.Review;
 import cs544.ea.OnlineRetailSystem.repository.ItemRepository;
 import cs544.ea.OnlineRetailSystem.service.ItemService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,5 +57,15 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public List<Item> searchItems(String Keyword) {
         return itemRepository.findByNameContainingIgnoreCase(Keyword);
+    }
+
+    @Override
+    public Review addReview(Long itemId, Review review) {
+        return null;
+    }
+
+    @Override
+    public List<Review> getReviewByItemId(Long itemId) {
+        return null;
     }
 }
