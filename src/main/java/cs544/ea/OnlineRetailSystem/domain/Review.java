@@ -30,4 +30,17 @@ public class Review {
 	@ManyToOne
 	private User buyer;
 
+	@ManyToOne
+	@JoinColumn(name = "itemId")
+   private Item item;
+
+	public void setItem(Item item) {
+		if(this.item != null) {
+			this.item.getReviews().remove(this);
+		}
+		this.item = item;
+		if(item != null) {
+			item.getReviews().add(this);
+		}
+	}
 }
