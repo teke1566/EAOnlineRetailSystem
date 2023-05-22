@@ -1,6 +1,7 @@
 package cs544.ea.OnlineRetailSystem.controller;
 
 import cs544.ea.OnlineRetailSystem.domain.Item;
+import cs544.ea.OnlineRetailSystem.domain.Review;
 import cs544.ea.OnlineRetailSystem.service.ItemService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -12,6 +13,8 @@ import java.util.List;
 public class ItemController {
 
     private final ItemService itemService;
+
+
 
     @Autowired
     public ItemController(ItemService itemService) {
@@ -46,6 +49,17 @@ public class ItemController {
     @GetMapping("/search")
     public List<Item> searchItems(@RequestParam String Keyword){
         return itemService.searchItems(Keyword);
+    }
+
+
+    @PostMapping("/{itemId}/reviews") // handle POST requests at /items/{itemId}/reviews
+    public Review addReview(@PathVariable Long itemId, @RequestBody Review review) {
+        return itemService.addReview(itemId, review);
+    }
+
+    @GetMapping("/{itemId}/reviews") // handle GET requests at /items/{itemId}/reviews
+    public List<Review> getReviewByItemId(@PathVariable Long itemId) {
+        return itemService.getReviewByItemId(itemId);
     }
 
 }
