@@ -25,4 +25,9 @@ public class LineItem {
 	
 	@Column(name = "discount")
 	private double discount;
+
+	//newly added Bidirectional relation with cart
+
+	@ManyToOne
+	private Cart cart;
 }
