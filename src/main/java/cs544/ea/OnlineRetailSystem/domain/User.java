@@ -11,11 +11,14 @@ import java.util.List;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long userId;
+    private Long id;
+    private String name;
+    private String email;
     private String firstName;
     private String lastName;
     private String password;
-    private String emailAddress;
+
+
     @OneToOne
     private Address billingAddress;
     @OneToMany
@@ -25,6 +28,6 @@ public class User {
     @JoinColumn(name = "userCreditCardId")
     private List<CreditCard> creditCards;
 
-    @Enumerated
-    private Roles roles;
+    @ManyToMany(fetch = FetchType.EAGER)
+    private List<Role> role;
 }

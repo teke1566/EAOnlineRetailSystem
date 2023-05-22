@@ -23,4 +23,5 @@ public class Cart {
 	@JoinColumn(name = "cartId")
 	private List<LineItem> lineItems;
 
+
 }
