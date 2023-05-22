@@ -5,7 +5,6 @@ import cs544.ea.OnlineRetailSystem.domain.CreditCard;
 import cs544.ea.OnlineRetailSystem.domain.User;
 import cs544.ea.OnlineRetailSystem.service.CustomerService;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 @RestController
@@ -37,8 +36,8 @@ public class CustomerController {
         customerService.deleteCustomerById(customerId);
     }
 
-    //CreditCard:
 
+    //CreditCard:
     @GetMapping("/creditCards")
     public List<CreditCard> getAllCreditCards(){
         return customerService.getAllCreditCards();

@@ -14,13 +14,13 @@ public class Cart {
 	@Id
 	@GeneratedValue
 	@Column(name = "cartId")
-	private int id;
+	private Long id;
 	
 	@OneToOne
 	private User customer;
 
-	@OneToMany
-	@JoinColumn(name = "cartId")
+	@OneToMany(mappedBy = "cart")
 	private List<LineItem> lineItems;
+
 
 }
