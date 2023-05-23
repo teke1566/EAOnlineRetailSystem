@@ -2,6 +2,8 @@ package cs544.ea.OnlineRetailSystem.controller;
 
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -9,14 +11,19 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import cs544.ea.OnlineRetailSystem.domain.dto.response.OrderResponse;
 import cs544.ea.OnlineRetailSystem.domain.Address;
 import cs544.ea.OnlineRetailSystem.domain.CreditCard;
+import cs544.ea.OnlineRetailSystem.domain.Order;
+import cs544.ea.OnlineRetailSystem.domain.OrderStatus;
 import cs544.ea.OnlineRetailSystem.domain.User;
+import cs544.ea.OnlineRetailSystem.domain.dto.response.OrderResponse;
 import cs544.ea.OnlineRetailSystem.service.CustomerService;
 import cs544.ea.OnlineRetailSystem.service.OrderService;
+import cs544.ea.OnlineRetailSystem.util.CustomErrorType;
+import jakarta.persistence.EntityNotFoundException;
 
 @RestController
 @RequestMapping("/api/v1/customer")
@@ -118,7 +125,41 @@ public class CustomerController {
     
     //Orders
     @GetMapping("/{customerId}/orders")
-    public List<OrderResponse> getOrdersByCustomerId(@PathVariable Long customerId) {
-    	return orderService.getOrdersByUserId(customerId);
+    public List<OrderResponse> getCustomerAllOrders(@PathVariable Long customerId, @RequestParam OrderStatus orderStatus) {
+    	if (orderStatus != null)
+    		return orderService.getCustomerOrderByStatus(customerId, orderStatus);
+    	return orderService.getCustomerAllOrders(customerId);
     }
+    
+    @GetMapping("/{customerId}/orders/{orderId}")
+    public ResponseEntity<?> getCustomerOrderById(@PathVariable Long customerId, @PathVariable Long orderId) {
+    	try {
+    		return new ResponseEntity<OrderResponse>(orderService.getCustomerOrderById(customerId, orderId), HttpStatus.OK);
+    	} catch (EntityNotFoundException e) {
+    		return new ResponseEntity<>(new CustomErrorType("Order not found"), HttpStatus.NOT_FOUND);
+    	}
+    }
+    	
+	@PutMapping("/{customerId}/orders/{orderId}")
+	public ResponseEntity<?> updateOrderById(@PathVariable Long customerId, @PathVariable Long orderId, @RequestBody Order order) {
+		try {
+			return new ResponseEntity<OrderResponse>(orderService.updateCustomerOrderById(customerId, orderId, order), HttpStatus.OK);
+		} catch (EntityNotFoundException e) {
+			return new ResponseEntity<>(new CustomErrorType("Order not found"), HttpStatus.NOT_FOUND);
+		} catch (Exception e) {
+			return new ResponseEntity<>(new CustomErrorType("Cannot delete order"), HttpStatus.BAD_REQUEST);
+		}
+	}
+	
+	@DeleteMapping("/{customerId}/orders/{orderId}")
+	public ResponseEntity<?> deleteOrderById(@PathVariable Long customerId, @PathVariable Long orderId) {
+		try {
+			orderService.deleteCustomerOrderById(customerId, orderId);
+			return new ResponseEntity<>(HttpStatus.OK);
+		} catch (EntityNotFoundException e) {
+			return new ResponseEntity<>(new CustomErrorType("Order not found"), HttpStatus.NOT_FOUND);
+		} catch (Exception e) {
+			return new ResponseEntity<>(new CustomErrorType("Cannot delete order"), HttpStatus.BAD_REQUEST);
+		}
+	}
 }
