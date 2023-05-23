@@ -4,6 +4,7 @@ import cs544.ea.OnlineRetailSystem.domain.*;
 import cs544.ea.OnlineRetailSystem.repository.CreditCardRepository;
 import cs544.ea.OnlineRetailSystem.repository.UserRepository;
 import cs544.ea.OnlineRetailSystem.service.CustomerService;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.BeanUtils;
 
 import org.springframework.security.core.Authentication;
@@ -42,6 +43,7 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
+    @Transactional
     public void deleteCustomerById(Long customerId){
         Optional<User> user= customerRepository.findById(customerId);
         //System.out.println(user.get());

@@ -55,7 +55,6 @@ public class CustomerController {
     }
     @DeleteMapping("/customers/{customerId}")
     public void deleteCustomer(@PathVariable Long customerId){
-        //System.out.println("here");
         customerService.deleteCustomerById(customerId);
     }
 
