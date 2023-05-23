@@ -53,6 +53,7 @@ public class CustomerController {
     }
     @DeleteMapping("/delete-customer/{customerId}")
     public void deleteCustomer(@PathVariable Long customerId){
+        //System.out.println("here");
         customerService.deleteCustomerById(customerId);
     }
 
@@ -125,10 +126,15 @@ public class CustomerController {
     
     //Orders
     @GetMapping("/{customerId}/orders")
+
+    public List<OrderResponse> getOrdersByCustomerId(@PathVariable Long customerId) {
+        return orderService.getOrdersByUserId(customerId);
+
     public List<OrderResponse> getCustomerAllOrders(@PathVariable Long customerId, @RequestParam OrderStatus orderStatus) {
     	if (orderStatus != null)
     		return orderService.getCustomerOrderByStatus(customerId, orderStatus);
     	return orderService.getCustomerAllOrders(customerId);
+
     }
     
     @GetMapping("/{customerId}/orders/{orderId}")

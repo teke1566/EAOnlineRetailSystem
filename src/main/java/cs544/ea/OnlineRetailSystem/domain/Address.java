@@ -12,11 +12,13 @@ public class Address {
     private Long id;
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "addresstype")
     private AddressType addressType;
 
     private String street;
     private String city;
     private String state;
+    @Column(name = "zipcode")
     private String zipCode;
     private String country;
 

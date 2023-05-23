@@ -1,11 +1,7 @@
 package cs544.ea.OnlineRetailSystem.service.Impl;
 
-import cs544.ea.OnlineRetailSystem.domain.Address;
-import cs544.ea.OnlineRetailSystem.domain.AddressType;
-import cs544.ea.OnlineRetailSystem.domain.CreditCard;
-import cs544.ea.OnlineRetailSystem.domain.User;
+import cs544.ea.OnlineRetailSystem.domain.*;
 import cs544.ea.OnlineRetailSystem.repository.CreditCardRepository;
-import cs544.ea.OnlineRetailSystem.repository.CustomerRepository;
 import cs544.ea.OnlineRetailSystem.repository.UserRepository;
 import cs544.ea.OnlineRetailSystem.service.CustomerService;
 import org.springframework.beans.BeanUtils;
@@ -20,45 +16,69 @@ import java.util.Optional;
 
 @Service
 public class CustomerServiceImpl implements CustomerService {
-     private UserRepository userRepository;
-    private final CustomerRepository customerRepository;
+     private final UserRepository customerRepository;
     private final CreditCardRepository creditCardRepository;
 
-    public CustomerServiceImpl(CustomerRepository customerRepository,CreditCardRepository creditCardRepository) {
+    public CustomerServiceImpl(UserRepository customerRepository,CreditCardRepository creditCardRepository) {
         this.customerRepository = customerRepository;
         this.creditCardRepository= creditCardRepository;
     }
+
+    @Override
+    public List<User> getAllCustomers() {
+        return customerRepository.findUsersByRole(Roles.CUSTOMER);
+    }
+
+    @Override
+    public User getCustomerById(Long customerId) {
+        Optional<User> user = customerRepository.findById(customerId);
+        if(user.isPresent()){
+            List<Role> roles = user.get().getRole();
+            if(roles.stream().anyMatch(role -> role.getRole() == Roles.CUSTOMER)) {
+                return user.get();
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public void deleteCustomerById(Long customerId){
+        Optional<User> user= customerRepository.findById(customerId);
+        //System.out.println(user.get());
+        if (user.isPresent()){
+            List<Role> roles= user.get().getRole();
+            if (roles.stream().anyMatch(role -> role.getRole()==Roles.CUSTOMER)){
+                customerRepository.deleteById(customerId);
+            }
+            else {
+                System.out.println("User Role is Not Customer");
+            }
+        }
+        else {
+            System.out.println("couldn't find user with the given id");
+        }
+    }
+
 
     @Override
     public User addCustomer(User user) {
         return customerRepository.save(user);
     }
 
-    @Override
-    public User getCustomerById(Long customerId) {
-        Optional<User> customer = customerRepository.findById(customerId);
-        return customer.orElse(null);
-    }
-
-    @Override
-    public List<User> getAllCustomers() {
-        return customerRepository.findAll();
-    }
-
-    @Override
-    public void deleteCustomerById(Long customerId) {
-        customerRepository.deleteById(customerId);
-    }
 
     @Override
     public User updateCustomer(Long customerId, User user) {
-        User existingCustomer = getCustomerById(customerId);
-        if(existingCustomer != null) {
-            BeanUtils.copyProperties(user, existingCustomer, "userId");//copy file from new to existing object
-            return customerRepository.save(existingCustomer);
+        Optional<User> existingUser = customerRepository.findById(customerId);
+        if (existingUser.isPresent()){
+            List<Role> roles = existingUser.get().getRole();
+            if(roles.stream().anyMatch(role -> role.getRole() == Roles.CUSTOMER)) {
+                BeanUtils.copyProperties(user, existingUser.get()); // copy properties from new to existing object, excluding id
+                return customerRepository.save(existingUser.get());
+            }
         }
         return null;
     }
+
 
     @Override
     public CreditCard addCreditCard(CreditCard creditCard) {
@@ -163,7 +183,7 @@ public class CustomerServiceImpl implements CustomerService {
 
         if (authentication != null && authentication.isAuthenticated()) {
             String username = authentication.getName();
-            return userRepository.findByname(username);
+            return customerRepository.findByname(username);
         }
 
         return null;
