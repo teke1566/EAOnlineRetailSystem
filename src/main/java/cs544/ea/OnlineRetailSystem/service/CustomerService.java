@@ -21,7 +21,7 @@ public interface CustomerService {
 
     //CreditCard
 
-    public CreditCard addCreditCard(CreditCard creditCard);
+//    public CreditCard addCreditCard(CreditCard creditCard);
     public CreditCard getCreditCardById(Long creditCardId);
 
     public void deleteCreditCardById(Long creditCardId);
@@ -32,7 +32,7 @@ public interface CustomerService {
 
     //ShippingAddress
 
-    public Address addShippingAddress(Address address);
+//    public Address addShippingAddress(Address address);
 
     public Address updateShippingAddress(Long shippingAddressId, Address address);
 
@@ -42,7 +42,7 @@ public interface CustomerService {
 
     //BillingAddress
 
-    public Address addBillingAddress(Address address);
+//    public Address addBillingAddress(Address address);
 
     public void deleteBillingAddressById(Long billingAddressId);
 

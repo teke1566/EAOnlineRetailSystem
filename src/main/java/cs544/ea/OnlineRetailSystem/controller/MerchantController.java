@@ -50,8 +50,8 @@ public class MerchantController {
     }
 
     @GetMapping("/search")
-    public List<Item> searchItems(@RequestParam String Keyword){
-        return itemService.searchItems(Keyword);
+    public List<Item> searchItemsByName(@RequestParam String Keyword){
+        return itemService.searchItemByName(Keyword);
     }
 
 

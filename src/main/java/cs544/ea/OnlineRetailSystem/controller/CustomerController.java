@@ -2,6 +2,7 @@ package cs544.ea.OnlineRetailSystem.controller;
 
 import java.util.List;
 
+import cs544.ea.OnlineRetailSystem.service.PublicService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -30,9 +31,14 @@ import jakarta.persistence.EntityNotFoundException;
 public class CustomerController {
     private final CustomerService customerService;
     private final OrderService orderService;
-    public CustomerController(CustomerService customerService, OrderService orderService){
+
+    private final PublicService publicService;
+
+
+    public CustomerController(CustomerService customerService, OrderService orderService, PublicService publicService){
         this.customerService = customerService;
         this.orderService = orderService;
+        this.publicService = publicService;
     }
 
     @GetMapping("/")
@@ -69,7 +75,7 @@ public class CustomerController {
 
     @PostMapping("/creditCard/add-new-creditCard")
     public CreditCard addNewCreditCard(@RequestBody CreditCard creditCard){
-        return customerService.addCreditCard(creditCard);
+        return publicService.addCreditCard(creditCard);
     }
     @PutMapping("/creditCard/update-creditCard/{creditCardId}")
     public CreditCard updateCreditCard(@PathVariable Long creditCardId, @RequestBody CreditCard creditCard){
@@ -83,7 +89,7 @@ public class CustomerController {
     // Shipping Address:
     @PostMapping("/shippingAddress/add-new-address")
     public Address addShippingAddress(@RequestBody Address address) {
-        return customerService.addShippingAddress(address);
+        return publicService.addShippingAddress(address);
     }
 
     @PutMapping("/shippingAddress/update-address/{shippingAddressId}")
@@ -105,7 +111,7 @@ public class CustomerController {
 
     @PostMapping("/billingAddress/add-new-address")
     public Address addBillingAddress(@RequestBody Address address) {
-        return customerService.addBillingAddress(address);
+        return publicService.addBillingAddress(address);
     }
 
     @PutMapping("/billingAddress/update-address/{billingAddressId}")

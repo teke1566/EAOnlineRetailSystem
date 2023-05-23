@@ -4,6 +4,7 @@ import cs544.ea.OnlineRetailSystem.domain.*;
 import cs544.ea.OnlineRetailSystem.repository.CreditCardRepository;
 import cs544.ea.OnlineRetailSystem.repository.UserRepository;
 import cs544.ea.OnlineRetailSystem.service.CustomerService;
+import cs544.ea.OnlineRetailSystem.service.PublicService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.BeanUtils;
 
@@ -19,6 +20,7 @@ import java.util.Optional;
 public class CustomerServiceImpl implements CustomerService {
      private final UserRepository customerRepository;
     private final CreditCardRepository creditCardRepository;
+
 
     public CustomerServiceImpl(UserRepository customerRepository,CreditCardRepository creditCardRepository) {
         this.customerRepository = customerRepository;
@@ -82,10 +84,10 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
 
-    @Override
-    public CreditCard addCreditCard(CreditCard creditCard) {
-        return creditCardRepository.save(creditCard);
-    }
+//    @Override
+//    public CreditCard addCreditCard(CreditCard creditCard) {
+//        return creditCardRepository.save(creditCard);
+//    }
     public CreditCard getCreditCardById(Long creditCardId){
         Optional<CreditCard> creditCard= creditCardRepository.findById(creditCardId);
         return creditCard.orElse(null);
@@ -112,17 +114,17 @@ public class CustomerServiceImpl implements CustomerService {
         return creditCardRepository.findAll();
     }
 
-    @Override
-    public Address addShippingAddress(Address address) {
-        User user = getUser(); // Retrieve the user from the current context, or fetch it from the repository
-        address.setAddressType(AddressType.SHIPPING);
-        user.getShippingAddresses().add(address);
-        return customerRepository.save(user).getShippingAddresses()
-                .stream()
-                .filter(a -> a.equals(address))
-                .findFirst()
-                .orElse(null);
-    }
+//    @Override
+//    public Address addShippingAddress(Address address) { //this is done in PublicService
+//        User user = getUser(); // Retrieve the user from the current context, or fetch it from the repository
+//        address.setAddressType(AddressType.SHIPPING);
+//        user.getShippingAddresses().add(address);
+//        return customerRepository.save(user).getShippingAddresses()
+//                .stream()
+//                .filter(a -> a.equals(address))
+//                .findFirst()
+//                .orElse(null);
+//    }
 
 
     @Override
@@ -173,29 +175,23 @@ public class CustomerServiceImpl implements CustomerService {
 
         return billingAddresses;
     }
-    @Override
-    public Address addBillingAddress(Address address) {
-        User user = getUser(); // Retrieve the user from the current context, or fetch it from the repository
-        address.setAddressType(AddressType.BILLING);
-        user.setBillingAddress(address);
-        return customerRepository.save(user).getBillingAddress();
-    }
-    private User getUser() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-        if (authentication != null && authentication.isAuthenticated()) {
-            String username = authentication.getName();
-            return customerRepository.findByname(username);
-        }
-
-        return null;
-    }
-
-
-
-
-
-
+//    @Override
+//    public Address addBillingAddress(Address address) {
+//        User user = getUser(); // Retrieve the user from the current context, or fetch it from the repository
+//        address.setAddressType(AddressType.BILLING);
+//        user.setBillingAddress(address);
+//        return customerRepository.save(user).getBillingAddress();
+//    }
+//    private User getUser() {
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//
+//        if (authentication != null && authentication.isAuthenticated()) {
+//            String username = authentication.getName();
+//            return customerRepository.findByname(username);
+//        }
+//
+//        return null;
+//    }
 
 
     @Override

@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface ItemService  {
-    List<Item> getAllItems();
+//    List<Item> getAllItems();
     Item getItemById(Long item);//this item has to belong to the Merchant which is the owner of the product
 
     Item addItem(Item item);
@@ -24,10 +24,10 @@ public interface ItemService  {
 
     List<Item> getAllItemByMerchantId(Long userId);//not to do that
 
-    List<Order> getAllOrder(Long userId);//userId means the merchant ID// not to do
+    List<Order> getAllOrder(Long userId);//to do
 
-    public Order getOrderById(Long id, Long merchantId);//it will return the //i will pass the order id and the merchant id
+    public Order getOrderById(Long id);//it will return the //
 
 
-    List<Item> searchItems(String keyword);
+    List<Item> getAllItems();
 }
