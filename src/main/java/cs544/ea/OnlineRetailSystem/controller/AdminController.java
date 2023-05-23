@@ -48,7 +48,7 @@ public class AdminController {
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @GetMapping("/owner/{id}")
+    @GetMapping("/merchants/{id}")
     public User getOwnerById(@PathVariable("id") long id){
         return adminService.getMerchantsById(id);
     }

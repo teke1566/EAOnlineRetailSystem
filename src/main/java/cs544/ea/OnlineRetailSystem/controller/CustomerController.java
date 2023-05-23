@@ -34,15 +34,17 @@ public class CustomerController {
         this.customerService = customerService;
         this.orderService = orderService;
     }
-
+    //localhost:9098/api/v1/customers/
     @GetMapping("/")
     public List<User> getAllCustomers(){
        return  customerService.getAllCustomers();
     }
+    //localhost:9098/api/v1/customers/300
     @GetMapping("/{customerId}")
     public User getCustomerById(@PathVariable Long customerId){
         return customerService.getCustomerById(customerId);
     }
+    //localhost:9098/api/v1/customers/
     @PostMapping
     public User addNewCustomer(@RequestBody User user){
        return customerService.addCustomer(user);
