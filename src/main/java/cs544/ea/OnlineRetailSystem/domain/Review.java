@@ -27,11 +27,11 @@ public class Review {
 	@Column(name = "reviewdate")
 	private LocalDateTime reviewDate;
 	
-	@ManyToOne
+	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "buyer")
 	private User buyer;
 
-	@ManyToOne
+	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "itmeid")
 	private Item item;
 

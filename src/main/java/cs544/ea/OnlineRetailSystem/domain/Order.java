@@ -15,11 +15,11 @@ public class Order {
 	@Column(name = "orderid")
 	private Long id;
 	
-	@ManyToOne
+	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "customer")
 	private User customer;
 	
-	@ManyToOne
+	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "shippingaddressid")
 	private Address shippingAddress;
 
@@ -30,7 +30,7 @@ public class Order {
 	@Column(name = "orderdate")
 	private LocalDateTime orderDate;
 
-	@OneToMany
+	@OneToMany(cascade = CascadeType.ALL)
 	@JoinColumn(name = "orderid")
 	private List<LineItem> lineItems;
 }
