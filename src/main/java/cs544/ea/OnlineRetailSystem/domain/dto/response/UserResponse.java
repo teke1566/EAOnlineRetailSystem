@@ -1,5 +1,6 @@
 package cs544.ea.OnlineRetailSystem.domain.dto.response;
 
+import cs544.ea.OnlineRetailSystem.domain.Address;
 import cs544.ea.OnlineRetailSystem.domain.Roles;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,13 +14,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserResponse {
-
-    private long id;
+    private Long id;
     private String name;
-
     private String email;
-    private Roles role;
-
-
-
+    private String firstName;
+    private String lastName;
+    private String password;
+    private Address billingAddress;
+    private Roles roles;
 }

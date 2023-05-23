@@ -12,6 +12,7 @@ import java.util.List;
 public class Item {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "itemid")
     private Long itemId;
     @Column(name = "name")
     private String name;
@@ -30,6 +31,7 @@ public class Item {
     private List<Review> reviews;
 
     @ManyToOne //Many item can be owned by one merchant
+    @JoinColumn(name = "merchant")
     private User merchant;
 }
 

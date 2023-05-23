@@ -14,18 +14,25 @@ public class User {
     private Long id;
     private String name;
     private String email;
+    @Column(name = "firstname")
     private String firstName;
+    @Column(name = "lastname")
     private String lastName;
     private String password;
 
 
-    @OneToOne
+    @ManyToOne
+    @JoinColumn(name = "billingaddress")
     private Address billingAddress;
-    @OneToMany
-    @JoinColumn(name = "userShippingAddressId")
+
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinTable(name = "useraddress",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "address_id"))
     private List<Address> shippingAddresses;
     @OneToMany
-    @JoinColumn(name = "userCreditCardId")
+    @JoinColumn(name = "user_id")
     private List<CreditCard> creditCards;
 
     @ManyToMany(fetch = FetchType.EAGER)

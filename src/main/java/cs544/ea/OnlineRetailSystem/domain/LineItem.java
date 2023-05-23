@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 @Entity
-@Table(name = "LineItem")
+@Table(name = "lineitem")
 //LineItem: Represents a specific item in a particular order and cart,
 // including the quantity and any applied discounts.
 // It would be used to manage the details of individual items within an order
@@ -13,11 +13,11 @@ public class LineItem {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "lineItemId")
+	@Column(name = "lineitemid")
 	private Long lineItemId;
 
 	@ManyToOne //one item can be sold many times
-	@JoinColumn(name = "itemId")
+	@JoinColumn(name = "itemid")
 	private Item item;
 
 	@Column(name = "quantity")

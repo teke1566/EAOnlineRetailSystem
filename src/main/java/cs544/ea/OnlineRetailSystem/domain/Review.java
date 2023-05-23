@@ -12,7 +12,7 @@ import lombok.Data;
 public class Review {
 	@Id
 	@GeneratedValue
-	@Column(name = "reviewId")
+	@Column(name = "reviewid")
 	private Long id;
 	
 	@Column(name = "title")
@@ -21,17 +21,18 @@ public class Review {
 	@Column(name = "description")
 	private String description;
 	
-	@Column(name = "numberOfStars")
+	@Column(name = "numberofstars")
 	private int numberOfStars;
 	
-	@Column(name = "reviewDate")
+	@Column(name = "reviewdate")
 	private LocalDateTime reviewDate;
 	
 	@ManyToOne
+	@JoinColumn(name = "buyer")
 	private User buyer;
 
 	@ManyToOne
-	@JoinColumn(name = "itmeId")
+	@JoinColumn(name = "itmeid")
 	private Item item;
 
 }

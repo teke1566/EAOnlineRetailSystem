@@ -8,28 +8,29 @@ import lombok.Data;
 
 @Data
 @Entity
-@Table(name = "orderTable")
+@Table(name = "ordertable")
 public class Order {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "orderId")
+	@Column(name = "orderid")
 	private Long id;
 	
 	@ManyToOne
+	@JoinColumn(name = "customer")
 	private User customer;
 	
 	@ManyToOne
-	@JoinColumn(name = "shippingAddressId")
+	@JoinColumn(name = "shippingaddressid")
 	private Address shippingAddress;
 
-	@Column(name = "OrderStatus")
-	@Enumerated
+	@Column(name = "orderstatus")
+	@Enumerated(EnumType.STRING)
 	private OrderStatus status;
 	
-	@Column(name = "orderDate")
+	@Column(name = "orderdate")
 	private LocalDateTime orderDate;
 
 	@OneToMany
-	@JoinColumn(name = "orderId")
+	@JoinColumn(name = "orderid")
 	private List<LineItem> lineItems;
 }

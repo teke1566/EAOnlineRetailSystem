@@ -46,6 +46,7 @@ public class CustomerController {
     }
     @DeleteMapping("/delete-customer/{customerId}")
     public void deleteCustomer(@PathVariable Long customerId){
+        //System.out.println("here");
         customerService.deleteCustomerById(customerId);
     }
 
@@ -119,6 +120,6 @@ public class CustomerController {
     //Orders
     @GetMapping("/{customerId}/orders")
     public List<OrderResponse> getOrdersByCustomerId(@PathVariable Long customerId) {
-    	return orderService.getOrdersByUserId(customerId);
+        return orderService.getOrdersByUserId(customerId);
     }
 }

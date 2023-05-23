@@ -2,11 +2,7 @@ package cs544.ea.OnlineRetailSystem.domain;
 
 import java.time.LocalDate;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Data;
 
 @Data
@@ -15,17 +11,20 @@ import lombok.Data;
 public class CreditCard {
 	
 	@Id
-	@GeneratedValue
-	@Column(name = "creditCardId")
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "creditcardid")
 	private Long id;
 	
-	@Column(name = "cardNumber")
+	@Column(name = "cardnumber")
 	private String cardNumber;
 	
-	@Column(name = "expirationDate")
+	@Column(name = "expirationdate")
 	private LocalDate expirationDate;
 	
-	@Column(name = "securityCode")
+	@Column(name = "securitycode")
 	private String securityCode;
+
+	@Column(name = "balance")
+	private double balance;
 
 }
