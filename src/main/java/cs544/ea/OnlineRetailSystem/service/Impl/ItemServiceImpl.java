@@ -1,6 +1,7 @@
 package cs544.ea.OnlineRetailSystem.service.Impl;
 
 import cs544.ea.OnlineRetailSystem.domain.Item;
+import cs544.ea.OnlineRetailSystem.domain.Order;
 import cs544.ea.OnlineRetailSystem.domain.Review;
 import cs544.ea.OnlineRetailSystem.repository.ItemRepository;
 import cs544.ea.OnlineRetailSystem.service.ItemService;
@@ -59,9 +60,11 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<Item> searchItems(String Keyword) {
+    public List<Item> searchItemByName(String Keyword) {
         return itemRepository.findByNameContainingIgnoreCase(Keyword);
     }
+
+
 
     @Override
     public Review addReview(Long itemId, Review review) {
@@ -73,5 +76,24 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public List<Review> getReviewByItemId(Long itemId) {
         return reviewRepository.findByItemId(itemId); // Return reviews by item id
+    }
+
+    @Override
+    public List<Item> getAllItemByMerchantId(Long userId) { //to do by other
+        return null;
+    }
+
+    @Override
+    public List<Order> getAllOrder(Long userId) {//to do by other
+        return null;
+    }
+
+    @Override
+    public Order getOrderById(Long id, Long merchantId) {//to do by other
+        return null;
+    }
+
+    public List<Item> searchItems(String keyword) {
+        return itemRepository.findByNameContainingIgnoreCase(keyword);
     }
 }
