@@ -2,6 +2,7 @@ package cs544.ea.OnlineRetailSystem.controller;
 
 import cs544.ea.OnlineRetailSystem.domain.Item;
 import cs544.ea.OnlineRetailSystem.domain.Review;
+import cs544.ea.OnlineRetailSystem.service.CustomerService;
 import cs544.ea.OnlineRetailSystem.service.ItemService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -10,15 +11,17 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/items")
-public class ItemController {
+public class MerchantController {
 
     private final ItemService itemService;
+    private final CustomerService customerService;
 
 
 
     @Autowired
-    public ItemController(ItemService itemService) {
+    public MerchantController(ItemService itemService, CustomerService customerService) {
         this.itemService = itemService;
+        this.customerService = customerService;
     }
 
     @GetMapping
