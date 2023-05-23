@@ -29,22 +29,47 @@ VALUES ('CUSTOMER');
 -- -- New sample data
 
 -- Insert data into 'address' table
+-- INSERT INTO address (id, addressType, street, city, state, zipCode, country)
+-- VALUES (1, 'SHIPPING', '123 Main St', 'New York', 'NY', '10001', 'USA'),
+--        (2, 'BILLING', '456 Elm St', 'Los Angeles', 'CA', '90001', 'USA'),
+--        (3, 'SHIPPING', '789 Pine St', 'Chicago', 'IL', '60601', 'USA'),
+--        (4, 'BILLING', '321 Oak St', 'Houston', 'TX', '77001', 'USA'),
+--        (5, 'BILLING', '322 Oak St', 'Houston', 'TX', '77001', 'USA'),
+--        (6, 'BILLING', '323 Oak St', 'Houston', 'TX', '77001', 'USA'),
+--        (7, 'BILLING', '324 Oak St', 'Houston', 'TX', '77001', 'USA'),
+--        (8, 'SHIPPING', '654 Cedar St', 'Philadelphia', 'PA', '19019', 'USA');
+-- --Users
+-- INSERT INTO users (id, name, email, firstName, lastName, password, billingAddress)
+-- VALUES (20, 'johndoe2', 'john.doe2@example.com', 'John', 'Doe', 'johndoe123', 2),
+--        (21, 'janedoe2', 'jane.doe2@example.com', 'Jane', 'Doe', 'janedoe123', 4),
+--        (22, 'youkim', 'youkim@example.com', 'CUSTOMER', 'User', 'admin123', 5),
+--        (23, 'merchant2', 'teke@example.com', 'MERCHANT', 'User', 'merchant123', 6),
+--        (24, 'customer2', 'Naod@example.com', 'Customer', 'User', 'customer123', 7);
+
+-- Insert data into 'address' table
 INSERT INTO address (id, addressType, street, city, state, zipCode, country)
 VALUES (1, 'SHIPPING', '123 Main St', 'New York', 'NY', '10001', 'USA'),
        (2, 'BILLING', '456 Elm St', 'Los Angeles', 'CA', '90001', 'USA'),
        (3, 'SHIPPING', '789 Pine St', 'Chicago', 'IL', '60601', 'USA'),
        (4, 'BILLING', '321 Oak St', 'Houston', 'TX', '77001', 'USA'),
-       (5, 'BILLING', '322 Oak St', 'Houston', 'TX', '77001', 'USA'),
-       (6, 'BILLING', '323 Oak St', 'Houston', 'TX', '77001', 'USA'),
-       (7, 'BILLING', '324 Oak St', 'Houston', 'TX', '77001', 'USA'),
+       (5, 'SHIPPING', '322 Oak St', 'Houston', 'TX', '77001', 'USA'),
+       (6, 'SHIPPING', '323 Oak St', 'Houston', 'TX', '77001', 'USA'),
+       (7, 'SHIPPING', '324 Oak St', 'Houston', 'TX', '77001', 'USA'),
        (8, 'SHIPPING', '654 Cedar St', 'Philadelphia', 'PA', '19019', 'USA');
---Users
-INSERT INTO users (id, name, email, firstName, lastName, password, billingAddress)
-VALUES (20, 'johndoe2', 'john.doe2@example.com', 'John', 'Doe', 'johndoe123', 2),
-       (21, 'janedoe2', 'jane.doe2@example.com', 'Jane', 'Doe', 'janedoe123', 4),
-       (22, 'youkim', 'youkim@example.com', 'CUSTOMER', 'User', 'admin123', 5),
-       (23, 'merchant2', 'teke@example.com', 'MERCHANT', 'User', 'merchant123', 6),
-       (24, 'customer2', 'Naod@example.com', 'Customer', 'User', 'customer123', 7);
+
+-- Insert data into 'users' table
+INSERT INTO users (id, name, email, firstName, lastName, password, billingAddress, defaultShippingAddress)
+VALUES (20, 'johndoe2', 'john.doe2@example.com', 'John', 'Doe', 'johndoe123', 2, 1),
+       (21, 'janedoe2', 'jane.doe2@example.com', 'Jane', 'Doe', 'janedoe123', 4, 3),
+       (22, 'youkim', 'youkim@example.com', 'CUSTOMER', 'User', 'admin123', 4, 5),
+       (23, 'merchant2', 'teke@example.com', 'MERCHANT', 'User', 'merchant123', 2, 6),
+       (24, 'customer2', 'Naod@example.com', 'Customer', 'User', 'customer123', 2, 7);
+
+
+
+
+
+
 
 
 INSERT INTO users_role (user_id, role_id)

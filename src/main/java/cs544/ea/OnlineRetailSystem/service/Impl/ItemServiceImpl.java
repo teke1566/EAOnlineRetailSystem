@@ -93,6 +93,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
+
     public List<Item> getAllItemByMerchantId(Long userId) { //i need to check first the item is belong to the merchant and get the item
 
         User merchant = userRepository.findById(userId).get();

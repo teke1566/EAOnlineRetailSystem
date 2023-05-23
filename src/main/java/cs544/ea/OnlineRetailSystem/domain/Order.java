@@ -26,26 +26,26 @@ public class Order {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "orderid")
 	private Long id;
-	
-	@ManyToOne(cascade = CascadeType.ALL)
+
+	@ManyToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST})
 	@JoinColumn(name = "customer")
 	private User customer;
-	
-	@ManyToOne(cascade = CascadeType.ALL)
+
+	@ManyToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST})
 	@JoinColumn(name = "shippingaddressid")
 	private Address shippingAddress;
 
 	@Column(name = "orderstatus")
 	@Enumerated(EnumType.STRING)
 	private OrderStatus status;
-	
+
 	@Column(name = "orderdate")
 	private LocalDateTime orderDate;
 
 	@OneToMany(cascade = CascadeType.ALL)
 	@JoinColumn(name = "orderid")
 	private List<LineItem> lineItems;
-	
+  
 	public Order(User customer) {
 		this.setCustomer(customer);
 		this.setShippingAddress(null); //call customer.getDefaultShippingAddress()

@@ -23,8 +23,8 @@ public class Cart {
 	@GeneratedValue
 	@Column(name = "cartid")
 	private Long id;
-
-	@OneToOne
+	
+	@OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
 	@JoinColumn(name = "customer")
 	private User customer;
 

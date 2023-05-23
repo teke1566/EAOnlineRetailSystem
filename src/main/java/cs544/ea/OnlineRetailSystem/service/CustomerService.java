@@ -19,6 +19,8 @@ public interface CustomerService {
 
     public User updateCustomer(Long customerId, User user);
 
+    public Address getCustomerDefaultShippingAddress(Long customerId);
+
     //CreditCard
 
 //    public CreditCard addCreditCard(CreditCard creditCard);
