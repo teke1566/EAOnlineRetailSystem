@@ -2,6 +2,7 @@ package cs544.ea.OnlineRetailSystem.controller;
 
 import java.util.List;
 
+import cs544.ea.OnlineRetailSystem.service.PublicService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -34,6 +35,7 @@ public class CustomerController {
 	
     private final CustomerService customerService;
     private final OrderService orderService;
+
     private final CartService cartService;
     
     public CustomerController(CustomerService customerService, OrderService orderService, CartService cartService){
@@ -78,7 +80,7 @@ public class CustomerController {
 
     @PostMapping("/credit-cards")
     public CreditCard addNewCreditCard(@RequestBody CreditCard creditCard){
-        return customerService.addCreditCard(creditCard);
+        return publicService.addCreditCard(creditCard);
     }
     @PutMapping("/credit-cards/{creditCardId}")
     public CreditCard updateCreditCard(@PathVariable Long creditCardId, @RequestBody CreditCard creditCard){
@@ -92,7 +94,7 @@ public class CustomerController {
     // Shipping Address:
     @PostMapping("/shippingAddress")
     public Address addShippingAddress(@RequestBody Address address) {
-        return customerService.addShippingAddress(address);
+        return publicService.addShippingAddress(address);
     }
 
     @PutMapping("/shippingAddress/{shippingAddressId}")
@@ -114,7 +116,7 @@ public class CustomerController {
 
     @PostMapping("/billingAddress")
     public Address addBillingAddress(@RequestBody Address address) {
-        return customerService.addBillingAddress(address);
+        return publicService.addBillingAddress(address);
     }
 
     @PutMapping("/billingAddress/{billingAddressId}")

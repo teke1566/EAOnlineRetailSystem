@@ -52,8 +52,11 @@ public class SecurityConfig {
 
                
                 .requestMatchers(HttpMethod.GET,"/api/v1/items/*").hasAnyAuthority(Roles.CUSTOMER.name())
+                .requestMatchers(HttpMethod.POST,"/api/v1/items/*").hasAnyAuthority(Roles.CUSTOMER.name())
 
-  .anyRequest()
+
+
+                .anyRequest()
                 .authenticated()
                 .and()
                 .sessionManagement()
