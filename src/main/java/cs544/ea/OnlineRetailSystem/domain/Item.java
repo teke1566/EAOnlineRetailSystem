@@ -27,10 +27,10 @@ public class Item {
     @Column(name = "quantityinstock")
     private Integer quantityInStock;
 
-    @OneToMany(mappedBy = "item")
+    @OneToMany(mappedBy = "item", cascade = CascadeType.ALL)
     private List<Review> reviews;
 
-    @ManyToOne //Many item can be owned by one merchant
+    @ManyToOne(cascade = CascadeType.ALL) //Many item can be owned by one merchant
     @JoinColumn(name = "merchant")
     private User merchant;
 }
