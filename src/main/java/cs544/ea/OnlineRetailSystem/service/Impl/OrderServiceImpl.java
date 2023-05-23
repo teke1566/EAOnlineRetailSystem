@@ -10,9 +10,12 @@ import org.springframework.stereotype.Service;
 
 import cs544.ea.OnlineRetailSystem.domain.Order;
 import cs544.ea.OnlineRetailSystem.domain.OrderStatus;
+import cs544.ea.OnlineRetailSystem.domain.User;
 import cs544.ea.OnlineRetailSystem.domain.dto.response.OrderResponse;
 import cs544.ea.OnlineRetailSystem.repository.OrderRepository;
+import cs544.ea.OnlineRetailSystem.repository.UserRepository;
 import cs544.ea.OnlineRetailSystem.service.OrderService;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 
 @Service
@@ -23,15 +26,14 @@ public class OrderServiceImpl implements OrderService {
 	private OrderRepository orderRepository;
 
 	@Autowired
+	private UserRepository userRepository;
+	
+	@Autowired
 	private ModelMapper mapper;
 	
 	@Override
 	public List<OrderResponse> getAllOrders() {
-		List<Order> orders = orderRepository.findAll();
-		List<OrderResponse> ordersResponse = orders.stream()
-				.map(order -> mapper.map(orders, OrderResponse.class))
-				.toList();
-		return ordersResponse;
+		return mapOrderToOrderResponse(orderRepository.findAll());
 	}
 
 	@Override
@@ -40,35 +42,65 @@ public class OrderServiceImpl implements OrderService {
 	}
 
 	@Override
-	public OrderResponse addOrder(Order order) {
-		return mapper.map(orderRepository.save(order), OrderResponse.class);
+	public List<OrderResponse> getOrdersByStatus(OrderStatus orderStatus) {
+		return mapOrderToOrderResponse(orderRepository.findOrdersByStatus(orderStatus));
 	}
 
 	@Override
-	public OrderResponse updateOrderById(Long orderId, Order order) {
-		Optional<Order> foundOrder = orderRepository.findById(orderId);
+	public List<OrderResponse> getCustomerAllOrders(Long userId) {
+		return mapOrderToOrderResponse(orderRepository.findOrdersByUserId(userId));
+	}
+
+	@Override
+	public List<OrderResponse> getCustomerOrderByStatus(Long userId, OrderStatus orderStatus) {
+		return mapOrderToOrderResponse(orderRepository.findOrdersByUserIdAndStatus(userId, orderStatus));
+	}
+
+	@Override
+	public OrderResponse getCustomerOrderById(Long userId, Long orderId) {
+		Optional<Order> order = orderRepository.findOrderByUserIdAndOrderId(userId, orderId);
+		if (order.isPresent())
+			return mapper.map(order.get(), OrderResponse.class);
+		throw new EntityNotFoundException("Order not found");
+	}
+
+	@Override
+	public OrderResponse addCustomerOrder(Long userId, Order order) {
+		Optional<User> customer = userRepository.findById(userId);
+		if (customer.isPresent()) {
+			order.setCustomer(customer.get());
+			return mapper.map(orderRepository.save(order), OrderResponse.class);
+		}
+		throw new EntityNotFoundException("Customer not found");
+	}
+
+	@Override
+	public OrderResponse updateCustomerOrderById(Long userId, Long orderId, Order order) throws Exception {
+		Optional<Order> foundOrder = orderRepository.findOrderByUserIdAndOrderId(userId, orderId);
 		if (foundOrder.isPresent()) {
 			Order existingOrder = foundOrder.get();
 			if (existingOrder.getStatus() == OrderStatus.NEW) {
 				BeanUtils.copyProperties(order, existingOrder, "orderId");
 				return mapper.map(orderRepository.save(existingOrder), OrderResponse.class);
-			}
+			} else throw new Exception("Order cannot be updated");
 		}
-		return null;
+		throw new EntityNotFoundException("Order not found");
 	}
 
 	@Override
-	public void deleteOrderById(Long orderId) {
-		orderRepository.deleteById(orderId);		
+	public void deleteCustomerOrderById(Long userId, Long orderId) throws Exception {
+		Optional<Order> foundOrder = orderRepository.findById(orderId);
+		if (foundOrder.isPresent()) {
+			Order existingOrder = foundOrder.get();
+			if (existingOrder.getStatus() == OrderStatus.NEW) {
+				orderRepository.deleteById(orderId);
+			} else throw new Exception("Order cannot be deleted");
+		} else throw new EntityNotFoundException("Order not found");
 	}
 
-	@Override
-	public List<OrderResponse> getOrdersByUserId(Long userId) {
-		List<Order> orders = orderRepository.getOrderByUserId(userId);
-		List<OrderResponse> ordersResponse = orders.stream()
+	private List<OrderResponse> mapOrderToOrderResponse(List<Order> orders) {
+		return orders.stream()
 				.map(order -> mapper.map(order, OrderResponse.class))
 				.toList();
-		return ordersResponse;
 	}
-
 }
