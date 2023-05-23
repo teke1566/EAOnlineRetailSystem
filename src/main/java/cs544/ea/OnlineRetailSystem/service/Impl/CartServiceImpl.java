@@ -1,47 +1,69 @@
 package cs544.ea.OnlineRetailSystem.service.Impl;
 
+import java.util.Optional;
+
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import cs544.ea.OnlineRetailSystem.domain.Cart;
 import cs544.ea.OnlineRetailSystem.domain.Item;
 import cs544.ea.OnlineRetailSystem.domain.LineItem;
+import cs544.ea.OnlineRetailSystem.domain.Order;
 import cs544.ea.OnlineRetailSystem.domain.User;
+import cs544.ea.OnlineRetailSystem.domain.dto.request.ItemRequest;
+import cs544.ea.OnlineRetailSystem.domain.dto.response.OrderResponse;
 import cs544.ea.OnlineRetailSystem.repository.CartRepository;
 import cs544.ea.OnlineRetailSystem.repository.ItemRepository;
+import cs544.ea.OnlineRetailSystem.repository.OrderRepository;
 import cs544.ea.OnlineRetailSystem.repository.UserRepository;
+import cs544.ea.OnlineRetailSystem.service.CartService;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 
-import java.util.Optional;
-
-public class CartServiceImpl {
+@Service
+@Transactional
+public class CartServiceImpl implements CartService {
+	
+	@Autowired
+	private ModelMapper mapper;
+	
+	private final OrderRepository orderRepository;
     private final UserRepository customerRepository;
     private final ItemRepository itemRepository;
     private final CartRepository cartRepository;
-    public CartServiceImpl(UserRepository customerRepository, ItemRepository itemRepository, CartRepository cartRepository) {
-        this.customerRepository=customerRepository;
+    
+    public CartServiceImpl(OrderRepository orderRepository, UserRepository customerRepository, ItemRepository itemRepository, CartRepository cartRepository) {
+        this.orderRepository = orderRepository;
+    	this.customerRepository=customerRepository;
         this.itemRepository=itemRepository;
         this.cartRepository=cartRepository;
     }
+    
     public Cart getCartByCustomerId(Long customerId){
-         Optional<Cart> cart=cartRepository.findById(customerId);
-        return cart.orElse(null);
+    	Optional<Cart> cart = cartRepository.findById(customerId);
+        if (cart.isPresent())
+        	return cart.get();
+        Optional<User> customer = customerRepository.findById(customerId);
+        if (customer.isPresent()) {
+        	Cart newCart = new Cart(customer.get());
+        	return cartRepository.save(newCart);
+        }
+        throw new EntityNotFoundException("Customer not found");
     }
 
-    public void addItemToCart(Long customerId, Long itemId) {
-        User customer = customerRepository.findById(customerId).orElseThrow(() -> new EntityNotFoundException("Customer not found"));
-        Item item = itemRepository.findById(itemId).orElseThrow(() -> new EntityNotFoundException("Item not found"));
-
-        Cart cart = getCartByCustomerId(customerId);
-        if (cart == null) {
-            cart = new Cart();
-            cart.setCustomer(customer);
+    public void addItemToCart(Long customerId, ItemRequest itemRequest) throws Exception {
+    	try {
+    		Cart cart = getCartByCustomerId(customerId);
+    		Item item = itemRepository.findById(itemRequest.getItemId()).orElseThrow(() -> new EntityNotFoundException("Item not found"));
+    		if (item.getQuantityInStock() < itemRequest.getQuantity())
+    			throw new Exception("Item not enough quantity");
+    		LineItem lineItem = new LineItem(item, itemRequest.getQuantity(), itemRequest.getDiscount(), cart);
+            cart.addLineItem(lineItem);
             cartRepository.save(cart);
-        }
-        //if the cart in not empty...
-
-        LineItem lineItem = new LineItem();
-        lineItem.setItem(item);
-        lineItem.setCart(cart);
-        cart.getLineItems().add(lineItem);
-        cartRepository.save(cart);
+    	} catch (EntityNotFoundException e) {
+    		throw e;
+    	}
     }
 
     public void removeItemFromCart(Long customerId, Long itemId) {
@@ -59,4 +81,31 @@ public class CartServiceImpl {
         }
     }
 
+	@Override
+	public void clearCart(Long customerId) {
+		try {
+			Cart cart = getCartByCustomerId(customerId);
+			cart.clearCart();
+			cartRepository.save(cart);
+		} catch (EntityNotFoundException e) {
+			throw e;
+		}
+	}
+
+	//create a new order
+	@Override
+	public OrderResponse checkoutCart(Long customerId) {
+		try {
+			Cart cart = getCartByCustomerId(customerId);
+			User customer = customerRepository.findById(customerId).get();
+			Order order = new Order(customer);
+			order.setLineItems(cart.getLineItems());
+			cart.clearCart();
+			cartRepository.save(cart);
+			return mapper.map(orderRepository.save(order), OrderResponse.class);
+		} catch (EntityNotFoundException e) {
+			throw e;
+		}
+	}
+	
 }

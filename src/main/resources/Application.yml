@@ -2,9 +2,10 @@ spring:
   application:
     name: postgres
   datasource:
-    username: postgres
-    password: 1
+    username: naodmengis
+    password: admin
     url: jdbc:postgresql://localhost:5432/mydb
+
   jpa:
     hibernate:
       ddl-auto: create-drop

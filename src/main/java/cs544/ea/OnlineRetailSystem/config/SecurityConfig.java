@@ -52,7 +52,8 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.PUT,"/api/v1/customer/**").hasAnyAuthority(Roles.CUSTOMER.name())
                 .requestMatchers(HttpMethod.GET,"/api/v1/items/*").permitAll()
 
-  .anyRequest()
+
+                .anyRequest()
                 .authenticated()
                 .and()
                 .sessionManagement()

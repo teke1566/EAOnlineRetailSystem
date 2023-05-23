@@ -17,6 +17,8 @@ public interface UserRepository extends JpaRepository<User,Long> {
 
     @Query("SELECT u FROM User u JOIN u.role r WHERE r.role = :role") //used to select User with Customer Role
     List<User> findUsersByRole(@Param("role") Roles role);
+    @Query("select u from User u join u.role r where r.role <> 'ADMIN'")
+    List<User> findAllExceptAdmin();
 
 
 }

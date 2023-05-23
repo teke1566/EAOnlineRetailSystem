@@ -30,9 +30,20 @@ public class PublicServiceImpl implements PublicService {
         this.orderRepository = orderRepository;
     }
 
+    @Autowired
+    private ItemRepository itemRepository;
+
+
     @Override
     public List<Item> getAllItem() {
-        return null;
+        return itemRepository.findAll();
+    }
+
+    @Override
+    public void deleteItemById(Long itemId) {
+        Item item = getItemById(itemId);
+        itemRepository.delete(item);
+
     }
 
     @Override
@@ -42,22 +53,45 @@ public class PublicServiceImpl implements PublicService {
 
     @Override
     public Item getItemById(Long itemId) {
-        return null;
+        return itemRepository.findById(itemId)
+                .orElseThrow(()-> new IllegalArgumentException("Item Not Found"));
     }
 
     @Override
     public Address addShippingAddress(Address address) {
+        User user = getUser();
+        address.setAddressType(AddressType.SHIPPING);
+        user.getShippingAddresses().add(address);
+
+        return customerRepository.save(user).getShippingAddresses()
+                .stream()
+                .filter(a -> a.equals(address))
+                .findFirst()
+                .orElse(null);
+    }
+
+    private User getUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication != null && authentication.isAuthenticated()) {
+            String username = authentication.getName();
+            return customerRepository.findByname(username);
+        }
+
         return null;
     }
 
     @Override
     public Address addBillingAddress(Address address) {
-        return null;
+        User user = getUser();
+        address.setAddressType(AddressType.BILLING);
+        user.setBillingAddress(address);
+        return customerRepository.save(user).getBillingAddress();
     }
 
     @Override
     public CreditCard addCreditCard(CreditCard creditCard) {
-        return null;
+        return creditCardRepository.save(creditCard);
     }
 
     @Override
@@ -190,4 +224,9 @@ public class PublicServiceImpl implements PublicService {
         return orderRepository.findByItemIdAndUserId(itemId, user.getId());
     }
 
+	@Override
+	public void deleteItemById(Long itemId) {
+		// TODO Auto-generated method stub
+		
+	}
 }
