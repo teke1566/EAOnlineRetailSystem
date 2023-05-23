@@ -31,4 +31,11 @@ public class LineItem {
 	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "cart_id")
 	private Cart cart;
+	
+	public LineItem(Item item, int quantity, double discount, Cart cart) {
+		this.setCart(cart);
+		this.setItem(item);
+		this.setQuantity(quantity);
+		this.setDiscount(discount);
+	}
 }

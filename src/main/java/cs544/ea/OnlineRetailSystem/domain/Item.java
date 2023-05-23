@@ -33,5 +33,9 @@ public class Item {
     @ManyToOne(cascade = CascadeType.ALL) //Many item can be owned by one merchant
     @JoinColumn(name = "merchant")
     private User merchant;
+    
+    public void decreaseQuantityInStock(int quantity) {
+    	this.setQuantityInStock(quantityInStock - quantity);
+    }
 }
 
