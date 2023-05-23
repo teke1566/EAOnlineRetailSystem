@@ -45,8 +45,10 @@ public class SecurityConfig {
                 .csrf().disable().cors().and()
                 .authorizeHttpRequests()
 
-                .requestMatchers("/api/v1/authenticate/**").permitAll()
-                .requestMatchers("/api/v1/customer/*").permitAll()
+               .requestMatchers("/api/v1/authenticate/**").permitAll()
+
+                .requestMatchers(HttpMethod.GET,"/api/v1/customer/*").hasAnyAuthority(Roles.ADMIN.name())
+                .requestMatchers(HttpMethod.DELETE,"/api/v1/customer/**").hasAnyAuthority(Roles.ADMIN.name())
 
                 .requestMatchers(HttpMethod.GET,"/api/v1/items/*").hasAnyAuthority(Roles.CUSTOMER.name())
 
