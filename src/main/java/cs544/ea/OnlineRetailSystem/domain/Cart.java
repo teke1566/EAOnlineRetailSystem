@@ -16,12 +16,10 @@ public class Cart {
 	@Column(name = "cartid")
 	private Long id;
 	
-	@OneToOne
+	@OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
 	@JoinColumn(name = "customer")
 	private User customer;
 
-	@OneToMany(mappedBy = "cart")
+	@OneToMany(mappedBy = "cart", cascade = CascadeType.ALL)
 	private List<LineItem> lineItems;
-
-
 }

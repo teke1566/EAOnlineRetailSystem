@@ -80,7 +80,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public List<Item> getAllItemByMerchantId(Long userId) { //to do by other
-        return null;
+        return null;///will do...
     }
 
     @Override
