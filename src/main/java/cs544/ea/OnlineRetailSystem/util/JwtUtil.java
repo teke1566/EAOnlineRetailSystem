@@ -16,19 +16,14 @@ public class JwtUtil {
     UserDetailsService userDetailsService;
     private final String secret = "top-secret";
     private final long expiration = 5 * 60 * 60 * 60;
-    //     private final long expiration = 5;
     private final long refreshExpiration = 5 * 60 * 60 * 60 * 60;
 
-    // this wil extract a claim from a token, its used in the methods above to get the username and date
-    // TODO When this detects the access token is expired it will throw and exception.
-    //  handle the exception and do not return null
 
 
     public <T> T getClaimFromToken(String token, Function<Claims, T> claimsResolver) {
         final Claims claims = getAllClaimsFromToken(token);
         return claimsResolver.apply(claims);
     }
-
     private Claims getAllClaimsFromToken(String token) {
         return Jwts.parser()
                 .setSigningKey(secret)
@@ -66,24 +61,7 @@ public class JwtUtil {
                 .compact();
     }
 
-    // Overridden to accommodate the refresh token
-    public String doGenerateToken( String subject) {
-        return Jwts.builder()
-                .setSubject(subject)
-                .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + expiration))
-                .signWith(SignatureAlgorithm.HS512, secret)
-                .compact();
-    }
 
-    public String generateRefreshToken(String email) {
-        return Jwts.builder()
-                .setSubject(email)
-                .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + refreshExpiration))
-                .signWith(SignatureAlgorithm.HS512, secret)
-                .compact();
-    }
 
     public String getSubject(String token) {
         return Jwts.parser()

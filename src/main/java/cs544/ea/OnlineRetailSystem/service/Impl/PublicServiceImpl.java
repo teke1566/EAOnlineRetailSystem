@@ -112,4 +112,10 @@ public class PublicServiceImpl implements PublicService {
     public Order getOrderByItemId() {
         return null;
     }
+
+	@Override
+	public void deleteItemById(Long itemId) {
+		// TODO Auto-generated method stub
+		
+	}
 }

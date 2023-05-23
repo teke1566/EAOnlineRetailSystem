@@ -5,6 +5,7 @@ spring:
     username: naodmengis
     password: admin
     url: jdbc:postgresql://localhost:5432/mydb
+
   jpa:
     hibernate:
       ddl-auto: create-drop

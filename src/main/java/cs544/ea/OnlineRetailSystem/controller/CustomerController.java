@@ -16,88 +16,93 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import cs544.ea.OnlineRetailSystem.domain.Address;
+import cs544.ea.OnlineRetailSystem.domain.Cart;
 import cs544.ea.OnlineRetailSystem.domain.CreditCard;
 import cs544.ea.OnlineRetailSystem.domain.Order;
 import cs544.ea.OnlineRetailSystem.domain.OrderStatus;
 import cs544.ea.OnlineRetailSystem.domain.User;
+import cs544.ea.OnlineRetailSystem.domain.dto.request.ItemRequest;
 import cs544.ea.OnlineRetailSystem.domain.dto.response.OrderResponse;
+import cs544.ea.OnlineRetailSystem.service.CartService;
 import cs544.ea.OnlineRetailSystem.service.CustomerService;
 import cs544.ea.OnlineRetailSystem.service.OrderService;
 import cs544.ea.OnlineRetailSystem.util.CustomErrorType;
 import jakarta.persistence.EntityNotFoundException;
 
 @RestController
-@RequestMapping("/api/v1/customer")
+@RequestMapping("/api/v1/customers")
 public class CustomerController {
+	
     private final CustomerService customerService;
     private final OrderService orderService;
 
-    private final PublicService publicService;
-
-
-    public CustomerController(CustomerService customerService, OrderService orderService, PublicService publicService){
+    private final CartService cartService;
+    
+    public CustomerController(CustomerService customerService, OrderService orderService, CartService cartService){
         this.customerService = customerService;
         this.orderService = orderService;
-        this.publicService = publicService;
+        this.cartService = cartService;
     }
-
+    //localhost:9098/api/v1/customers/
     @GetMapping("/")
     public List<User> getAllCustomers(){
        return  customerService.getAllCustomers();
     }
+    //localhost:9098/api/v1/customers/300
     @GetMapping("/{customerId}")
     public User getCustomerById(@PathVariable Long customerId){
         return customerService.getCustomerById(customerId);
     }
-    @PostMapping("/add-new-customer")
+    //localhost:9098/api/v1/customers/
+    @PostMapping
     public User addNewCustomer(@RequestBody User user){
        return customerService.addCustomer(user);
     }
-    @PutMapping("/update-customer/{customerId}")
+    @PutMapping("/customers/{customerId}")
     public User updateCustomer(@PathVariable Long customerId,@RequestBody User user){
         return customerService.updateCustomer(customerId,user);
     }
-    @DeleteMapping("/delete-customer/{customerId}")
+    @DeleteMapping("/customers/{customerId}")
     public void deleteCustomer(@PathVariable Long customerId){
         customerService.deleteCustomerById(customerId);
     }
 
 
     //CreditCard:
-    @GetMapping("/creditCards")
+    @GetMapping("/credit-cards")
     public List<CreditCard> getAllCreditCards(){
         return customerService.getAllCreditCards();
     }
-    @GetMapping("/creditCard/{creditCardId}")
+    @GetMapping("/credit-cards/{creditCardId}")
     public CreditCard getCreditCardById(@PathVariable Long creditCardId){
         return customerService.getCreditCardById(creditCardId);
     }
 
-    @PostMapping("/creditCard/add-new-creditCard")
+    @PostMapping("/credit-cards")
     public CreditCard addNewCreditCard(@RequestBody CreditCard creditCard){
         return publicService.addCreditCard(creditCard);
     }
-    @PutMapping("/creditCard/update-creditCard/{creditCardId}")
+    @PutMapping("/credit-cards/{creditCardId}")
     public CreditCard updateCreditCard(@PathVariable Long creditCardId, @RequestBody CreditCard creditCard){
         return customerService.updateCreditCard(creditCardId,creditCard);
     }
-    @DeleteMapping("/creditCard/delete-credit-card/{creditCardId}")
+    @DeleteMapping("/credit-cards/{creditCardId}")
     public void deleteCreditCardById(@PathVariable Long creditCardId){
         customerService.deleteCreditCardById(creditCardId);
     }
     
     // Shipping Address:
-    @PostMapping("/shippingAddress/add-new-address")
+    @PostMapping("/shippingAddress")
     public Address addShippingAddress(@RequestBody Address address) {
         return publicService.addShippingAddress(address);
     }
 
-    @PutMapping("/shippingAddress/update-address/{shippingAddressId}")
+    @PutMapping("/shippingAddress/{shippingAddressId}")
     public Address updateShippingAddress(@PathVariable Long shippingAddressId, @RequestBody Address address) {
         return customerService.updateShippingAddress(shippingAddressId, address);
     }
 
-    @DeleteMapping("/shippingAddress/delete-address/{shippingAddressId}")
+    @DeleteMapping("/shippingAddress/{shippingAddressId}")
     public void deleteShippingAddress(@PathVariable Long shippingAddressId) {
         customerService.deleteShippingAddressById(shippingAddressId);
     }
@@ -109,17 +114,17 @@ public class CustomerController {
 
     // Billing Address:
 
-    @PostMapping("/billingAddress/add-new-address")
+    @PostMapping("/billingAddress")
     public Address addBillingAddress(@RequestBody Address address) {
         return publicService.addBillingAddress(address);
     }
 
-    @PutMapping("/billingAddress/update-address/{billingAddressId}")
+    @PutMapping("/billingAddress/{billingAddressId}")
     public Address updateBillingAddress(@PathVariable Long billingAddressId, @RequestBody Address address) {
         return customerService.updateBillingAddress(billingAddressId, address);
     }
 
-    @DeleteMapping("/billingAddress/delete-address/{billingAddressId}")
+    @DeleteMapping("/billingAddress/{billingAddressId}")
     public void deleteBillingAddress(@PathVariable Long billingAddressId) {
         customerService.deleteBillingAddressById(billingAddressId);
     }
@@ -128,6 +133,57 @@ public class CustomerController {
     public List<Address> getAllBillingAddresses() {
         return customerService.getAllBillingAddress();
     }
+    
+    //cart
+    @GetMapping("/{customerId}/cart")
+    public ResponseEntity<?> getCustomerCart(@PathVariable Long customerId) {
+    	try {
+    		return new ResponseEntity<Cart>(cartService.getCartByCustomerId(customerId), HttpStatus.OK);
+    	} catch (EntityNotFoundException e) {
+    		return new ResponseEntity<>(new CustomErrorType(e.getMessage()), HttpStatus.NOT_FOUND);
+    	}
+    }
+    
+    @PostMapping("/{customerId}/cart")
+    public ResponseEntity<?> checkoutCart(@PathVariable Long customerId) {
+    	try {
+    		return new ResponseEntity<OrderResponse>(cartService.checkoutCart(customerId), HttpStatus.OK);
+    	} catch(EntityNotFoundException e) {
+    		return new ResponseEntity<>(new CustomErrorType(e.getMessage()), HttpStatus.NOT_FOUND);
+    	}
+    }
+    
+    @PostMapping("/{customerId}/cart/{itemId}")
+    public ResponseEntity<?> addItemToCart(@PathVariable Long customerId, @RequestBody ItemRequest itemRequest) {
+    	try {
+    		cartService.addItemToCart(customerId, itemRequest);
+    		return new ResponseEntity<>(HttpStatus.OK);
+    	} catch(Exception e) {
+    		return new ResponseEntity<>(new CustomErrorType(e.getMessage()), HttpStatus.NOT_FOUND);
+    	}
+    }
+    
+    @DeleteMapping("/{customerId}/cart/{itemId}")
+    public ResponseEntity<?> removeItemFromCart(@PathVariable Long customerId, @PathVariable Long itemId) {
+    	try {
+    		cartService.removeItemFromCart(customerId, itemId);
+    		return new ResponseEntity<>(HttpStatus.OK);
+    	} catch(EntityNotFoundException e) {
+    		return new ResponseEntity<>(new CustomErrorType(e.getMessage()), HttpStatus.NOT_FOUND);
+    	}
+    }
+    
+    @DeleteMapping("/{customerId}/cart")
+    public ResponseEntity<?> clearCart(@PathVariable Long customerId) {
+    	try {
+    		cartService.clearCart(customerId);
+    		return new ResponseEntity<>(HttpStatus.OK);
+    	} catch(EntityNotFoundException e) {
+    		return new ResponseEntity<>(new CustomErrorType(e.getMessage()), HttpStatus.NOT_FOUND);
+    	}
+    }
+    
+    
     
     //Orders
     @GetMapping("/{customerId}/orders")
@@ -142,20 +198,20 @@ public class CustomerController {
     	try {
     		return new ResponseEntity<OrderResponse>(orderService.getCustomerOrderById(customerId, orderId), HttpStatus.OK);
     	} catch (EntityNotFoundException e) {
-    		return new ResponseEntity<>(new CustomErrorType("Order not found"), HttpStatus.NOT_FOUND);
+    		return new ResponseEntity<>(new CustomErrorType(e.getMessage()), HttpStatus.NOT_FOUND);
     	}
     }
     	
-	@PutMapping("/{customerId}/orders/{orderId}")
-	public ResponseEntity<?> updateOrderById(@PathVariable Long customerId, @PathVariable Long orderId, @RequestBody Order order) {
-		try {
-			return new ResponseEntity<OrderResponse>(orderService.updateCustomerOrderById(customerId, orderId, order), HttpStatus.OK);
-		} catch (EntityNotFoundException e) {
-			return new ResponseEntity<>(new CustomErrorType("Order not found"), HttpStatus.NOT_FOUND);
-		} catch (Exception e) {
-			return new ResponseEntity<>(new CustomErrorType("Cannot delete order"), HttpStatus.BAD_REQUEST);
-		}
-	}
+//	@PutMapping("/{customerId}/orders/{orderId}")
+//	public ResponseEntity<?> updateOrderById(@PathVariable Long customerId, @PathVariable Long orderId, @RequestBody Order order) {
+//		try {
+//			return new ResponseEntity<OrderResponse>(orderService.updateCustomerOrderById(customerId, orderId, order), HttpStatus.OK);
+//		} catch (EntityNotFoundException e) {
+//			return new ResponseEntity<>(new CustomErrorType("Order not found"), HttpStatus.NOT_FOUND);
+//		} catch (Exception e) {
+//			return new ResponseEntity<>(new CustomErrorType("Cannot delete order"), HttpStatus.BAD_REQUEST);
+//		}
+//	}
 	
 	@DeleteMapping("/{customerId}/orders/{orderId}")
 	public ResponseEntity<?> deleteOrderById(@PathVariable Long customerId, @PathVariable Long orderId) {
