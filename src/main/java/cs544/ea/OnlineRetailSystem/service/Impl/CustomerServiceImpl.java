@@ -1,6 +1,7 @@
 package cs544.ea.OnlineRetailSystem.service.Impl;
 
 import cs544.ea.OnlineRetailSystem.domain.*;
+import cs544.ea.OnlineRetailSystem.helper.GetUser;
 import cs544.ea.OnlineRetailSystem.repository.*;
 import cs544.ea.OnlineRetailSystem.service.CustomerService;
 import jakarta.persistence.EntityNotFoundException;
@@ -29,19 +30,22 @@ public class CustomerServiceImpl implements CustomerService {
     private final OrderRepository orderRepository;
     private final ReviewRepository reviewRepository;
 
+    private final GetUser getUser;
+
     public CustomerServiceImpl(UserRepository customerRepository,
                                CreditCardRepository creditCardRepository,
                                CartRepository cartRepository,
                                LineItemRepository lineItemRepository,
                                OrderRepository orderRepository,
-                               ReviewRepository reviewRepository) {
+                               ReviewRepository reviewRepository,
+                               GetUser getUser) {
         this.customerRepository=customerRepository;
         this.lineItemRepository=lineItemRepository;
         this.cartRepository=cartRepository;
         this.creditCardRepository=creditCardRepository;
         this.orderRepository=orderRepository;
         this.reviewRepository=reviewRepository;
-
+        this.getUser=getUser;
     }
 
     @Override
@@ -277,4 +281,9 @@ public class CustomerServiceImpl implements CustomerService {
 
         return shippingAddresses;
     }
+
+    //remaining customer service method
+
+
+
 }

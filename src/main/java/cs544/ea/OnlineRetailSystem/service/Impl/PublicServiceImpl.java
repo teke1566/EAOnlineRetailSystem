@@ -5,14 +5,9 @@ import cs544.ea.OnlineRetailSystem.helper.GetUser;
 import cs544.ea.OnlineRetailSystem.repository.*;
 import cs544.ea.OnlineRetailSystem.service.PublicService;
 import jakarta.transaction.Transactional;
-import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
 import org.springframework.beans.BeanUtils;
-
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.Optional;
 
@@ -40,7 +35,6 @@ public class PublicServiceImpl implements PublicService {
 
     @Override
     public List<Item> getAllItems() {
-       // System.out.println("the current active user is :"+getUser.getUser());
         return itemRepository.findAll();
     }
 
@@ -216,6 +210,15 @@ public class PublicServiceImpl implements PublicService {
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
         return orderRepository.findByItemIdAndUserId(itemId, user.getId());
+    }
+
+    public Order getOrderByOrderId(Long orderId){
+        Long userId= getUser.getUser().getId();
+        Optional<Order> order= orderRepository.findOrderByUserIdAndOrderId(userId,orderId);
+        if (order.isPresent()){
+            return order.get();
+        }
+        return null;
     }
 
 
