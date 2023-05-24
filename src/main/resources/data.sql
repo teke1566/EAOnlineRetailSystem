@@ -112,6 +112,8 @@ VALUES (1, 20),
 
 
 
+
+
 -- Item
 INSERT INTO item (itemId, name, description, price, image, barcode, quantityinstock, merchant)
 VALUES (1, 'Item 1', 'Description 1', 100, 'Image 1', '123456789012', 10, 23),
