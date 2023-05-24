@@ -1,10 +1,7 @@
 package cs544.ea.OnlineRetailSystem.service.Impl;
 
 import cs544.ea.OnlineRetailSystem.domain.*;
-import cs544.ea.OnlineRetailSystem.repository.CartRepository;
-import cs544.ea.OnlineRetailSystem.repository.CreditCardRepository;
-import cs544.ea.OnlineRetailSystem.repository.LineItemRepository;
-import cs544.ea.OnlineRetailSystem.repository.UserRepository;
+import cs544.ea.OnlineRetailSystem.repository.*;
 import cs544.ea.OnlineRetailSystem.service.CustomerService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -28,13 +25,23 @@ public class CustomerServiceImpl implements CustomerService {
     private final CartRepository cartRepository;
 
     private final LineItemRepository lineItemRepository;
-@Autowired
-    public CustomerServiceImpl(UserRepository customerRepository, CreditCardRepository creditCardRepository
-            , CartRepository cartRepository, LineItemRepository lineItemRepository) {
-        this.customerRepository = customerRepository;
-        this.creditCardRepository = creditCardRepository;
-        this.cartRepository = cartRepository;
-        this.lineItemRepository = lineItemRepository;
+
+    private final OrderRepository orderRepository;
+    private final ReviewRepository reviewRepository;
+
+    public CustomerServiceImpl(UserRepository customerRepository,
+                               CreditCardRepository creditCardRepository,
+                               CartRepository cartRepository,
+                               LineItemRepository lineItemRepository,
+                               OrderRepository orderRepository,
+                               ReviewRepository reviewRepository) {
+        this.customerRepository=customerRepository;
+        this.lineItemRepository=lineItemRepository;
+        this.cartRepository=cartRepository;
+        this.creditCardRepository=creditCardRepository;
+        this.orderRepository=orderRepository;
+        this.reviewRepository=reviewRepository;
+
     }
 
     @Override
@@ -56,22 +63,31 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     @Transactional
-    public void deleteCustomerById(Long customerId) {
+    public void deleteCustomerById(Long customerId) throws Exception {
         Optional<User> user = customerRepository.findById(customerId);
         if (user.isPresent()) {
             List<Role> roles = user.get().getRole();
-            if (roles.stream().anyMatch(role -> role.getRole() == Roles.CUSTOMER)) {
+            if (roles.stream().anyMatch(role -> role.getRole().equals(Roles.CUSTOMER))) {
                 Cart carts = cartRepository.findCartByCustomerId(customerId);
-                lineItemRepository.deleteLineItemsByCartId(carts.getId());
-                customerRepository.deleteById(customerId);
-                cartRepository.deleteCartByCustomerId(customerId);
+                List<Order> order= orderRepository.findOrderByUserId(customerId);
+                List<Review> reviews = reviewRepository.findByUserId(customerId);
+                if (carts == null || carts.getId() == null || order.isEmpty() || reviews.isEmpty()) {
+                    customerRepository.deleteById(customerId);
+                } else {
+                    cartRepository.deleteCartByCustomerId(customerId);
+                    lineItemRepository.deleteLineItemsByCartId(carts.getId());
+                    orderRepository.deleteOrderByCustomerId(customerId);
+                    reviewRepository.deleteByUserId(customerId);
+                    customerRepository.deleteById(customerId);
+                }
             } else {
-                System.out.println("User Role is Not Customer");
+                throw new Exception("User Role is Not Customer");
             }
         } else {
-            System.out.println("couldn't find user with the given id");
+            throw new Exception("Couldn't find user with the given id");
         }
     }
+
 
 
     @Override
@@ -81,6 +97,7 @@ public class CustomerServiceImpl implements CustomerService {
 
 
     @Override
+    @Transactional
     public User updateCustomer(Long customerId, User user) {
         Optional<User> existingUser = customerRepository.findById(customerId);
         if (!existingUser.isPresent()) {
@@ -90,7 +107,7 @@ public class CustomerServiceImpl implements CustomerService {
         if (!roles.stream().anyMatch(role -> role.getRole() == Roles.CUSTOMER)) {
             throw new IllegalArgumentException("User with id " + customerId + " is not a customer.");
         }
-        BeanUtils.copyProperties(user, existingUser.get());
+        BeanUtils.copyProperties(user, existingUser.get(),"id");
         try {
             return customerRepository.save(existingUser.get());
         } catch (DataAccessException dae) {
@@ -131,7 +148,7 @@ public class CustomerServiceImpl implements CustomerService {
     public CreditCard updateCreditCard(Long creditCardId, CreditCard creditCard) {
         CreditCard existingCreditCard = getCreditCardById(creditCardId);
         if (existingCreditCard != null) {
-            BeanUtils.copyProperties(creditCard, existingCreditCard);//copy file from new to existing object
+            BeanUtils.copyProperties(creditCard, existingCreditCard,"id");//copy file from new to existing object
             return creditCardRepository.save(existingCreditCard);
         }
         return null;

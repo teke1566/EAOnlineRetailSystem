@@ -5,8 +5,13 @@ import cs544.ea.OnlineRetailSystem.helper.GetUser;
 import cs544.ea.OnlineRetailSystem.repository.*;
 import cs544.ea.OnlineRetailSystem.service.PublicService;
 import jakarta.transaction.Transactional;
+import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
 import org.springframework.beans.BeanUtils;
+
+import org.springframework.security.core.context.SecurityContextHolder;
+=======
 import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,18 +23,18 @@ public class PublicServiceImpl implements PublicService {
     private final CreditCardRepository creditCardRepository;
     private final AddressRepository addressRepository;
     private final OrderRepository orderRepository;
+    private  final ItemRepository itemRepository;
     User userHelper = GetUser.getUser();
 
     public PublicServiceImpl(UserRepository userRepository, CreditCardRepository creditCardRepository,
-                             AddressRepository addressRepository, OrderRepository orderRepository) {
+                             AddressRepository addressRepository, OrderRepository orderRepository,
+                             ItemRepository itemRepository) {
         this.userRepository = userRepository;
         this.creditCardRepository = creditCardRepository;
         this.addressRepository = addressRepository;
         this.orderRepository = orderRepository;
+        this.itemRepository=itemRepository;
     }
-
-    @Autowired
-    private ItemRepository itemRepository;
 
 
     @Override
@@ -43,6 +48,7 @@ public class PublicServiceImpl implements PublicService {
         itemRepository.delete(item);
 
     }
+
 
 
     @Override
@@ -63,6 +69,7 @@ public class PublicServiceImpl implements PublicService {
                 .findFirst()
                 .orElse(null);
     }
+
 
 
 
@@ -201,7 +208,7 @@ public class PublicServiceImpl implements PublicService {
     }
 
     @Override
-    public List<Order> getOrderByItemId(Long itemId) {// what if there are multiple orders with the same item id
+    public List<Order> getOrderByItemId(Long itemId) {// what if there are multiple orders with the same item id(reason why it returns List)
         //get the current user
         User user = userRepository.findById(userHelper.getId())
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));

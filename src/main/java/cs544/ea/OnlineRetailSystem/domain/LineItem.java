@@ -1,11 +1,14 @@
 package cs544.ea.OnlineRetailSystem.domain;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @Entity
 @Table(name = "lineitem")
+@NoArgsConstructor
 //LineItem: Represents a specific item in a particular order and cart,
 // including the quantity and any applied discounts.
 // It would be used to manage the details of individual items within an order
@@ -30,6 +33,7 @@ public class LineItem {
 
 	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "cart_id")
+	@JsonBackReference
 	private Cart cart;
 	
 	public LineItem(Item item, int quantity, double discount, Cart cart) {

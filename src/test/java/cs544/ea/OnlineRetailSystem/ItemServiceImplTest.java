@@ -140,7 +140,7 @@ class ItemServiceImplTest {
         Mockito.when(itemRepository.findByNameContainingIgnoreCase(keyword)).thenReturn(itemList);
 
         // Call the service method
-        List<Item> result = itemService.searchItems(keyword);
+        List<Item> result = itemService.searchItemByName(keyword);
 
         // Verify the result
         Assertions.assertEquals(2, result.size());

@@ -39,6 +39,9 @@ public class CustomerController {
     private final PublicService publicService;
 
     private final CartService cartService;
+
+    private final PublicService publicService;
+    
 @Autowired
     public CustomerController(CustomerService customerService, OrderService orderService
             , PublicService publicService, CartService cartService) {
@@ -46,39 +49,40 @@ public class CustomerController {
         this.orderService = orderService;
         this.publicService = publicService;
         this.cartService = cartService;
+        this.publicService=publicService;
     }
 
     //localhost:9098/api/v1/customers/
-    @GetMapping("/")
+    @GetMapping("/") //working
     public List<User> getAllCustomers(){
        return  customerService.getAllCustomers();
     }
     //localhost:9098/api/v1/customers/300
-    @GetMapping("/{customerId}")
+    @GetMapping("/{customerId}")// working
     public User getCustomerById(@PathVariable Long customerId){
         return customerService.getCustomerById(customerId);
     }
     //localhost:9098/api/v1/customers/
-    @PostMapping
+    @PostMapping// working
     public User addNewCustomer(@RequestBody User user){
        return customerService.addCustomer(user);
     }
-    @PutMapping("/customers/{customerId}")
+    @PutMapping("/{customerId}")//working
     public User updateCustomer(@PathVariable Long customerId,@RequestBody User user){
         return customerService.updateCustomer(customerId,user);
     }
-    @DeleteMapping("/customers/{customerId}")
-    public void deleteCustomer(@PathVariable Long customerId){
+    @DeleteMapping("/{customerId}")//working
+    public void deleteCustomer(@PathVariable Long customerId) throws Exception {
         customerService.deleteCustomerById(customerId);
     }
 
 
     //CreditCard:
-    @GetMapping("/credit-cards")
+    @GetMapping("/credit-cards")// working....get all credit card
     public List<CreditCard> getAllCreditCards(){
         return customerService.getAllCreditCards();
     }
-    @GetMapping("/credit-cards/{creditCardId}")
+    @GetMapping("/credit-cards/{creditCardId}")//working .. getCreditCardById
     public CreditCard getCreditCardById(@PathVariable Long creditCardId){
         return customerService.getCreditCardById(creditCardId);
     }
@@ -87,11 +91,11 @@ public class CustomerController {
     public CreditCard addNewCreditCard(@RequestBody CreditCard creditCard){
         return publicService.addCreditCard(creditCard);
     }
-    @PutMapping("/credit-cards/{creditCardId}")
+    @PutMapping("/credit-cards/{creditCardId}")//working
     public CreditCard updateCreditCard(@PathVariable Long creditCardId, @RequestBody CreditCard creditCard){
         return customerService.updateCreditCard(creditCardId,creditCard);
     }
-    @DeleteMapping("/credit-cards/{creditCardId}")
+    @DeleteMapping("/credit-cards/{creditCardId}")// working
     public void deleteCreditCardById(@PathVariable Long creditCardId){
         customerService.deleteCreditCardById(creditCardId);
     }
