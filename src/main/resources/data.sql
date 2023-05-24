@@ -147,9 +147,9 @@ VALUES (1, 20, 1, 'DELIVERED', '2023-05-20 10:00:00'),
 
 
 -- Review
-INSERT INTO review (title, description, numberOfStars, reviewDate, buyer, itemid)
-VALUES ('Great Product', 'I loved it!', 5, '2023-05-21 15:00:00', 20, 1),
-       ( 'Decent', 'Could be better', 3, '2023-05-22 16:00:00', 21, 2),
-       ('Fantastic', 'Exceeds expectations', 5, '2023-05-23 17:00:00', 24, 3),
-       ( 'Bad Product', 'I hate it!', 1, '2023-05-24 18:00:00', 20, 4),
-       ('Average', 'Met expectations', 3, '2023-05-25 19:00:00', 21, 5);
+--INSERT INTO review (itemid,title, description, numberOfStars, reviewDate, buyer, itemId)
+--VALUES (1,'Great Product', 'I loved it!', 5, '2023-05-21 15:00:00', 20, 1),
+--       ( 2,'Decent', 'Could be better', 3, '2023-05-22 16:00:00', 21, 2),
+--       (3,'Fantastic', 'Exceeds expectations', 5, '2023-05-23 17:00:00', 24, 3),
+--       ( 4,'Bad Product', 'I hate it!', 1, '2023-05-24 18:00:00', 20, 4),
+--       (5,'Average', 'Met expectations', 3, '2023-05-25 19:00:00', 21, 5);

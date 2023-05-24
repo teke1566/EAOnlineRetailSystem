@@ -1,10 +1,15 @@
 package cs544.ea.OnlineRetailSystem.service.Impl;
 
+import cs544.ea.OnlineRetailSystem.domain.Order;
+import cs544.ea.OnlineRetailSystem.domain.OrderStatus;
 import cs544.ea.OnlineRetailSystem.domain.Roles;
 import cs544.ea.OnlineRetailSystem.domain.User;
+import cs544.ea.OnlineRetailSystem.domain.dto.response.OrderResponse;
 import cs544.ea.OnlineRetailSystem.domain.dto.response.UserResponse;
+import cs544.ea.OnlineRetailSystem.repository.OrderRepository;
 import cs544.ea.OnlineRetailSystem.repository.UserRepository;
 import cs544.ea.OnlineRetailSystem.service.AdminService;
+import jakarta.persistence.EntityNotFoundException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,11 +20,13 @@ import java.util.List;
 public class AdminServiceImpl implements AdminService {
     private UserRepository userRepository;
     private final ModelMapper modelMapper;
+    private final OrderRepository orderRepository;
     @Autowired
 
-    public AdminServiceImpl(UserRepository userRepository, ModelMapper modelMapper) {
+    public AdminServiceImpl(UserRepository userRepository, ModelMapper modelMapper, OrderRepository orderRepository) {
         this.userRepository = userRepository;
         this.modelMapper = modelMapper;
+        this.orderRepository = orderRepository;
     }
 
     @Override
@@ -69,5 +76,13 @@ public class AdminServiceImpl implements AdminService {
     public void deleteUser(long id) {
         userRepository.deleteById(id);
     }
+    @Override
+    public OrderResponse changeOrderStatus(Long orderId, OrderStatus orderStatus) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new EntityNotFoundException("Order not found"));
 
+        order.setStatus(orderStatus);
+        orderRepository.save(order);
+        return null;
+    }
 }
