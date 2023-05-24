@@ -3,6 +3,7 @@ package cs544.ea.OnlineRetailSystem.controller;
 import java.util.List;
 
 import cs544.ea.OnlineRetailSystem.service.PublicService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -35,14 +36,18 @@ public class CustomerController {
 	
     private final CustomerService customerService;
     private final OrderService orderService;
+    private final PublicService publicService;
 
     private final CartService cartService;
-    
-    public CustomerController(CustomerService customerService, OrderService orderService, CartService cartService){
+@Autowired
+    public CustomerController(CustomerService customerService, OrderService orderService
+            , PublicService publicService, CartService cartService) {
         this.customerService = customerService;
         this.orderService = orderService;
+        this.publicService = publicService;
         this.cartService = cartService;
     }
+
     //localhost:9098/api/v1/customers/
     @GetMapping("/")
     public List<User> getAllCustomers(){

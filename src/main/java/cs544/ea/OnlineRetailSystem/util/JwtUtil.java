@@ -16,7 +16,7 @@ public class JwtUtil {
     UserDetailsService userDetailsService;
     private final String secret = "top-secret";
     private final long expiration = 5 * 60 * 60 * 60;
-    private final long refreshExpiration = 5 * 60 * 60 * 60 * 60;
+
 
 
 
@@ -24,6 +24,7 @@ public class JwtUtil {
         final Claims claims = getAllClaimsFromToken(token);
         return claimsResolver.apply(claims);
     }
+
     private Claims getAllClaimsFromToken(String token) {
         return Jwts.parser()
                 .setSigningKey(secret)
@@ -63,13 +64,8 @@ public class JwtUtil {
 
 
 
-    public String getSubject(String token) {
-        return Jwts.parser()
-                .setSigningKey(secret)
-                .parseClaimsJws(token)
-                .getBody()
-                .getSubject();
-    }
+
+
 
     public boolean validateToken(String token) {
         try {
@@ -95,12 +91,6 @@ public class JwtUtil {
 
 
 
-    public String doGenerateRefreshToken(Map<String, Object> claims, String subject) {
-
-        return Jwts.builder().setClaims(claims).setSubject(subject).setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + expiration))
-                .signWith(SignatureAlgorithm.HS512, secret).compact();
-    }
 
 
     public String getUsernameFromToken(String token) {

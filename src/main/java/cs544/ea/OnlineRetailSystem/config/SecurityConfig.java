@@ -46,14 +46,17 @@ public class SecurityConfig {
                 .authorizeHttpRequests()
 
                 .requestMatchers("/api/v1/authenticate/**").permitAll()
+                .requestMatchers(HttpMethod.GET,"/api/v1/items/*").permitAll()
                 .requestMatchers(HttpMethod.GET,"/api/v1/customer/*").hasAnyAuthority(Roles.CUSTOMER.name())
                 .requestMatchers(HttpMethod.DELETE,"/api/v1/customer/**").hasAnyAuthority(Roles.CUSTOMER.name())
                 .requestMatchers(HttpMethod.PUT,"/api/v1/customer/**").hasAnyAuthority(Roles.CUSTOMER.name())
                 .requestMatchers(HttpMethod.PUT,"/api/v1/customer/**").hasAnyAuthority(Roles.CUSTOMER.name())
-                .requestMatchers(HttpMethod.GET,"/api/v1/items/*").permitAll()
 
 
-                .anyRequest()
+                .requestMatchers(HttpMethod.GET,"/api/v1/admin/*").hasAnyAuthority(Roles.ADMIN.name())
+                .requestMatchers(HttpMethod.DELETE,"/api/v1/admin/**").hasAnyAuthority(Roles.ADMIN.name())
+
+  .anyRequest()
                 .authenticated()
                 .and()
                 .sessionManagement()
@@ -63,8 +66,6 @@ public class SecurityConfig {
 
         return http.build();
     }
-
-
 
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
