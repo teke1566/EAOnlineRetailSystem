@@ -7,10 +7,10 @@ import cs544.ea.OnlineRetailSystem.repository.LineItemRepository;
 import cs544.ea.OnlineRetailSystem.repository.UserRepository;
 import cs544.ea.OnlineRetailSystem.service.CustomerService;
 import jakarta.persistence.EntityNotFoundException;
-import cs544.ea.OnlineRetailSystem.service.PublicService;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -28,11 +28,14 @@ public class CustomerServiceImpl implements CustomerService {
     private final CartRepository cartRepository;
 
     private final LineItemRepository lineItemRepository;
-
-    public CustomerServiceImpl(UserRepository customerRepository,
-                               CreditCardRepository creditCardRepository,
-                               CartRepository cartRepository,
-                               LineItemRepository lineItemRepository) {
+@Autowired
+    public CustomerServiceImpl(UserRepository customerRepository, CreditCardRepository creditCardRepository
+            , CartRepository cartRepository, LineItemRepository lineItemRepository) {
+        this.customerRepository = customerRepository;
+        this.creditCardRepository = creditCardRepository;
+        this.cartRepository = cartRepository;
+        this.lineItemRepository = lineItemRepository;
+    }
 
     @Override
     public List<User> getAllCustomers() {
@@ -201,7 +204,6 @@ public class CustomerServiceImpl implements CustomerService {
         return billingAddresses;
     }
 
-=======
 //    @Override
 //    public Address addBillingAddress(Address address) {
 //        User user = getUser(); // Retrieve the user from the current context, or fetch it from the repository
