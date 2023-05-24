@@ -126,14 +126,14 @@ public class OrderServiceImpl implements OrderService {
 			order.setStatus(OrderStatus.PLACED);
 
 			// send a message to the "OrderPlacedQueue" queue with the order ID
-			 sendOrderPlacedMessage(order);
+			 //sendOrderPlacedMessage(order);
 
 			return mapper.map(orderRepository.save(order), OrderResponse.class);
 		}
 		throw new Exception("Order cannot be placed");
 	}
 
-	public void sendOrderPlacedMessage(Order order) {
-		jmsTemplate.convertAndSend("OrderPlacedQueue", order.getId());
-	}
+//	public void sendOrderPlacedMessage(Order order) {
+//		jmsTemplate.convertAndSend("OrderPlacedQueue", order.getId());
+//	}
 }

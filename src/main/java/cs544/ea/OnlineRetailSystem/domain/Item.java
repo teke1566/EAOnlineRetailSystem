@@ -2,7 +2,6 @@ package cs544.ea.OnlineRetailSystem.domain;
 
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-=======
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.*;

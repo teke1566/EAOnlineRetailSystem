@@ -21,4 +21,6 @@ public interface UserRepository extends JpaRepository<User,Long> {
     List<User> findAllExceptAdmin();
 
 
+    @Query("select u from User u where u.email=:email")
+    User findUserByEmailAddress(String email);
 }
