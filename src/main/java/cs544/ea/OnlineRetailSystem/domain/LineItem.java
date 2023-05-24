@@ -42,4 +42,11 @@ public class LineItem {
 		this.setQuantity(quantity);
 		this.setDiscount(discount);
 	}
+	
+	public LineItem(Item item, double discount, Cart cart) {
+		this.setCart(cart);
+		this.setQuantity(0);
+		this.setItem(item);
+		this.setDiscount(discount);
+	}
 }

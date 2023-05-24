@@ -37,10 +37,9 @@ public class CustomerController {
     private final CustomerService customerService;
     private final OrderService orderService;
     private final PublicService publicService;
-
     private final CartService cartService;
     
-@Autowired
+//    @Autowired
     public CustomerController(CustomerService customerService, OrderService orderService
             , PublicService publicService, CartService cartService) {
         this.customerService = customerService;
@@ -140,58 +139,64 @@ public class CustomerController {
 //        return customerService.getAllBillingAddress();
 //    }
 //
-    //cart
-    @GetMapping("/{customerId}/cart")
-    public ResponseEntity<?> getCustomerCart(@PathVariable Long customerId) {
-    	try {
-    		return new ResponseEntity<Cart>(cartService.getCartByCustomerId(customerId), HttpStatus.OK);
-    	} catch (EntityNotFoundException e) {
-    		return new ResponseEntity<>(new CustomErrorType(e.getMessage()), HttpStatus.NOT_FOUND);
-    	}
+    
+    /** CART APIs */
+    
+    // GET /api/v1/customers/cart
+    // get cart for the current customer
+    @GetMapping("/cart")
+    public ResponseEntity<?> getCustomerCart() {
+    	return new ResponseEntity<Cart>(cartService.getCartForCurrentCustomer(), HttpStatus.OK);
     }
     
-    @PostMapping("/{customerId}/cart")
-    public ResponseEntity<?> checkoutCart(@PathVariable Long customerId) {
+    // POST /api/v1/customers/cart
+    // checkout cart for the current customer
+    @PostMapping("/cart")
+    public ResponseEntity<?> checkoutCart() {
     	try {
-    		return new ResponseEntity<OrderResponse>(cartService.checkoutCart(customerId), HttpStatus.OK);
+    		return new ResponseEntity<OrderResponse>(cartService.checkoutCart(), HttpStatus.OK);
     	} catch(EntityNotFoundException e) {
     		return new ResponseEntity<>(new CustomErrorType(e.getMessage()), HttpStatus.NOT_FOUND);
     	}
     }
     
-    @PostMapping("/{customerId}/cart/{itemId}")//add Item to Cart
-    public ResponseEntity<?> addItemToCart(@PathVariable Long customerId, @RequestBody ItemRequest itemRequest) {
+    // POST /api/v1/customers/cart/items
+    // add Item to Cart
+    @PostMapping("/cart/items")
+    public ResponseEntity<?> addItemToCart(@RequestBody ItemRequest itemRequest) {
     	try {
-    		cartService.addItemToCart(customerId, itemRequest);
+    		cartService.addItemToCart(itemRequest);
     		return new ResponseEntity<>(HttpStatus.OK);
     	} catch(Exception e) {
     		return new ResponseEntity<>(new CustomErrorType(e.getMessage()), HttpStatus.NOT_FOUND);
     	}
     }
     
-    @DeleteMapping("/{customerId}/cart/{itemId}")//remove Item from Cart
-    public ResponseEntity<?> removeItemFromCart(@PathVariable Long customerId, @PathVariable Long itemId) {
+    // DELETE /api/v1/customers/cart/items/:lineItemId
+    // given lineItemId remove Item from Cart
+    @DeleteMapping("/cart/items/{lineItemId}")
+    public ResponseEntity<?> removeItemFromCart(@PathVariable Long lineItemId) {
     	try {
-    		cartService.removeItemFromCart(customerId, itemId);
+    		cartService.removeItemFromCart(lineItemId);
     		return new ResponseEntity<>(HttpStatus.OK);
     	} catch(EntityNotFoundException e) {
     		return new ResponseEntity<>(new CustomErrorType(e.getMessage()), HttpStatus.NOT_FOUND);
     	}
     }
     
-    @DeleteMapping("/{customerId}/cart")// clear customer cart
-    public ResponseEntity<?> clearCart(@PathVariable Long customerId) {
-    	try {
-    		cartService.clearCart(customerId);
-    		return new ResponseEntity<>(HttpStatus.OK);
-    	} catch(EntityNotFoundException e) {
-    		return new ResponseEntity<>(new CustomErrorType(e.getMessage()), HttpStatus.NOT_FOUND);
-    	}
+    // DELETE /api/v1/customers/cart
+    // clear the current customer cart
+    @DeleteMapping("/cart")
+    public ResponseEntity<?> clearCart() {
+		cartService.clearCart();
+		return new ResponseEntity<>(HttpStatus.OK);
     }
-    
     
     
     //Orders
+    
+    // GET /api/v1/customers/orders?orderStatus=PLACED
+    // GET /api/v1/customers/orders
     @GetMapping("/{customerId}/orders")
     public List<OrderResponse> getCustomerAllOrders(@PathVariable Long customerId, @RequestParam OrderStatus orderStatus) {
     	if (orderStatus != null)

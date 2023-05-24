@@ -5,10 +5,10 @@ import cs544.ea.OnlineRetailSystem.domain.dto.response.OrderResponse;
 
 public interface CartService {
 	
-    public Cart getCartByCustomerId(Long customerId);
-    public void addItemToCart(Long customerId, ItemRequest itemRequest) throws Exception;
-    public void removeItemFromCart(Long customerId, Long itemId);
-    public void clearCart(Long customerId);
-    public OrderResponse checkoutCart(Long customerId);
+    public Cart getCartForCurrentCustomer();
+    public void addItemToCart(ItemRequest itemRequest) throws Exception;
+    public void removeItemFromCart(Long itemId);
+    public void clearCart();
+    public OrderResponse checkoutCart();
 
 }
