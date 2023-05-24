@@ -1,5 +1,7 @@
 package cs544.ea.OnlineRetailSystem.service.Impl;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import org.modelmapper.ModelMapper;
@@ -13,10 +15,11 @@ import cs544.ea.OnlineRetailSystem.domain.Order;
 import cs544.ea.OnlineRetailSystem.domain.User;
 import cs544.ea.OnlineRetailSystem.domain.dto.request.ItemRequest;
 import cs544.ea.OnlineRetailSystem.domain.dto.response.OrderResponse;
+import cs544.ea.OnlineRetailSystem.helper.GetUser;
 import cs544.ea.OnlineRetailSystem.repository.CartRepository;
 import cs544.ea.OnlineRetailSystem.repository.ItemRepository;
+import cs544.ea.OnlineRetailSystem.repository.LineItemRepository;
 import cs544.ea.OnlineRetailSystem.repository.OrderRepository;
-import cs544.ea.OnlineRetailSystem.repository.UserRepository;
 import cs544.ea.OnlineRetailSystem.service.CartService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -28,84 +31,84 @@ public class CartServiceImpl implements CartService {
 	@Autowired
 	private ModelMapper mapper;
 	
-	private final OrderRepository orderRepository;
-    private final UserRepository customerRepository;
-    private final ItemRepository itemRepository;
-    private final CartRepository cartRepository;
+	@Autowired
+	private GetUser getUser;
+	
+	@Autowired
+	private OrderRepository orderRepository;
+	
+	@Autowired
+    private ItemRepository itemRepository;
+	
+	@Autowired
+    private CartRepository cartRepository;
+	
+	@Autowired
+	private LineItemRepository lineItemRepository;
     
-    public CartServiceImpl(OrderRepository orderRepository, UserRepository customerRepository, ItemRepository itemRepository, CartRepository cartRepository) {
-        this.orderRepository = orderRepository;
-    	this.customerRepository=customerRepository;
-        this.itemRepository=itemRepository;
-        this.cartRepository=cartRepository;
-    }
     
-    public Cart getCartByCustomerId(Long customerId){
-    	Optional<Cart> cart = cartRepository.findById(customerId);
+    @Override
+    public Cart getCartForCurrentCustomer(){
+    	User customer = getUser.getUser();
+    	Optional<Cart> cart = cartRepository.findById(customer.getId());
         if (cart.isPresent())
         	return cart.get();
-        Optional<User> customer = customerRepository.findById(customerId);
-        if (customer.isPresent()) {
-        	Cart newCart = new Cart(customer.get());
-        	return cartRepository.save(newCart);
-        }
-        throw new EntityNotFoundException("Customer not found");
+        Cart newCart = new Cart(customer);
+        return cartRepository.save(newCart);
     }
 
-    public void addItemToCart(Long customerId, ItemRequest itemRequest) throws Exception {
-    	try {
-    		Cart cart = getCartByCustomerId(customerId);
-    		Item item = itemRepository.findById(itemRequest.getItemId()).orElseThrow(() -> new EntityNotFoundException("Item not found"));
-    		if (item.getQuantityInStock() < itemRequest.getQuantity())
-    			throw new Exception("Item not enough quantity");
-    		LineItem lineItem = new LineItem(item, itemRequest.getQuantity(), itemRequest.getDiscount(), cart);
-            cart.addLineItem(lineItem);
-            cartRepository.save(cart);
-    	} catch (EntityNotFoundException e) {
-    		throw e;
-    	}
+    @Override
+    public void addItemToCart(ItemRequest itemRequest) throws Exception {
+		Cart cart = getCartForCurrentCustomer();
+		Item item = itemRepository.findById(itemRequest.getItemId()).orElseThrow(() -> new EntityNotFoundException("Item not found"));
+		LineItem lineItem = cart.getLineItems().stream()
+								.filter(li -> li.getItem().getItemId().equals(item.getItemId()))
+								.findFirst()
+								.orElse(new LineItem(item, itemRequest.getDiscount(), cart));
+		
+		int quantity = itemRequest.getQuantity();
+		if (lineItem.getQuantity() > 0) {
+			quantity += lineItem.getQuantity();
+		}
+		lineItem.setQuantity(quantity);
+
+		if (item.getQuantityInStock() < quantity)
+			throw new Exception("Item not enough quantity");
+	
+		cart.addLineItem(lineItem);
+        cartRepository.save(cart);
     }
 
-    public void removeItemFromCart(Long customerId, Long itemId) {
-        Cart cart = getCartByCustomerId(customerId);
-        if (cart != null) {
-            LineItem lineItem = cart.getLineItems().stream()
-                    .filter(li -> li.getItem().getItemId().equals(itemId))
-                    .findFirst()
-                    .orElseThrow(() -> new EntityNotFoundException("Item not found in cart"));
-
-            cart.getLineItems().remove(lineItem);
-            cartRepository.save(cart);
-        } else {
-            throw new EntityNotFoundException("Cart not found");
-        }
+    @Override
+    public void removeItemFromCart(Long lineItemId) {
+        Cart cart = getCartForCurrentCustomer();
+        cart.getLineItems().stream()
+        	.filter(li -> li.getLineItemId().equals(lineItemId))
+        	.findFirst()
+        	.orElseThrow(() -> new EntityNotFoundException("LineItem not found in cart"));
+        
+        lineItemRepository.deleteLineItemByCartIdAndLineItemId(cart.getId(), lineItemId);
     }
 
 	@Override
-	public void clearCart(Long customerId) {
-		try {
-			Cart cart = getCartByCustomerId(customerId);
-			cart.clearCart();
-			cartRepository.save(cart);
-		} catch (EntityNotFoundException e) {
-			throw e;
-		}
+	public void clearCart() {
+		Cart cart = getCartForCurrentCustomer();
+		lineItemRepository.deleteLineItemsByCartId(cart.getId());
 	}
 
 	//create a new order
 	@Override
-	public OrderResponse checkoutCart(Long customerId) {
-		try {
-			Cart cart = getCartByCustomerId(customerId);
-			User customer = customerRepository.findById(customerId).get();
-			Order order = new Order(customer);
-			order.setLineItems(cart.getLineItems());
-			cart.clearCart();
-			cartRepository.save(cart);
-			return mapper.map(orderRepository.save(order), OrderResponse.class);
-		} catch (EntityNotFoundException e) {
-			throw e;
-		}
+	public OrderResponse checkoutCart() {
+		User customer = getUser.getUser();
+		Cart cart = getCartForCurrentCustomer();
+		
+		List<LineItem> lineItems = new ArrayList<>();
+		cart.getLineItems().forEach(li -> lineItems.add(li));
+		lineItemRepository.deleteLineItemsByCartId(cart.getId()); //clear cart
+		
+		Order order = new Order(customer);
+		order.setLineItems(lineItems);
+		return mapper.map(orderRepository.save(order), OrderResponse.class);
 	}
 	
 }
