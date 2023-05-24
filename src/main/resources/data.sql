@@ -111,12 +111,12 @@ VALUES (1, 20),
        (5, 24);
 
 -- Item
-INSERT INTO item (itemId, name, description, price, image, barcode, quantityinstock, merchant)
-VALUES (1, 'Item 1', 'Description 1', 100, 'Image 1', '123456789012', 10, 23),
-       (2, 'Item 2', 'Description 2', 200, 'Image 2', '234567890123', 20, 23),
-       (3, 'Item 3', 'Description 3', 300, 'Image 3', '345678901234', 30, 23),
-       (4, 'Item 4', 'Description 4', 400, 'Image 4', '456789012345', 40, 23),
-       (5, 'Item 5', 'Description 5', 500, 'Image 5', '567890123456', 50, 23);
+INSERT INTO item (name, description, price, image, barcode, quantityinstock, merchant)
+VALUES ('Item 1', 'Description 1', 100, 'Image 1', '123456789012', 10, 23),
+       ( 'Item 2', 'Description 2', 200, 'Image 2', '234567890123', 20, 23),
+       ( 'Item 3', 'Description 3', 300, 'Image 3', '345678901234', 30, 23),
+       ( 'Item 4', 'Description 4', 400, 'Image 4', '456789012345', 40, 23),
+       ('Item 5', 'Description 5', 500, 'Image 5', '567890123456', 50, 23);
 
 
 -- CreditCard
@@ -147,9 +147,9 @@ VALUES (1, 20, 1, 'DELIVERED', '2023-05-20 10:00:00'),
 
 
 -- Review
-INSERT INTO review (reviewId, title, description, numberOfStars, reviewDate, buyer, itmeId)
-VALUES (1, 'Great Product', 'I loved it!', 5, '2023-05-21 15:00:00', 20, 1),
-       (2, 'Decent', 'Could be better', 3, '2023-05-22 16:00:00', 21, 2),
-       (3, 'Fantastic', 'Exceeds expectations', 5, '2023-05-23 17:00:00', 24, 3),
-       (4, 'Bad Product', 'I hate it!', 1, '2023-05-24 18:00:00', 20, 4),
-       (5, 'Average', 'Met expectations', 3, '2023-05-25 19:00:00', 21, 5);
+INSERT INTO review (title, description, numberOfStars, reviewDate, buyer, itemid)
+VALUES ('Great Product', 'I loved it!', 5, '2023-05-21 15:00:00', 20, 1),
+       ( 'Decent', 'Could be better', 3, '2023-05-22 16:00:00', 21, 2),
+       ('Fantastic', 'Exceeds expectations', 5, '2023-05-23 17:00:00', 24, 3),
+       ( 'Bad Product', 'I hate it!', 1, '2023-05-24 18:00:00', 20, 4),
+       ('Average', 'Met expectations', 3, '2023-05-25 19:00:00', 21, 5);

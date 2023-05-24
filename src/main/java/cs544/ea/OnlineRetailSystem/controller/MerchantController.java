@@ -24,7 +24,7 @@ public class MerchantController {
         this.customerService = customerService;
     }
 
-    @GetMapping("/")
+    @GetMapping
     public List<Item> getAllItems(){
         return itemService.getAllItems();
     }

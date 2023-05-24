@@ -8,20 +8,26 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 @Component
-public class GetUser {// a utility function that retrieves the currently authenticated User object from your application's security context.
+public class GetUser {
+
+    private UserRepository userRepository;
+
 
     @Autowired
-    static UserRepository customerRepository;
-    public static User getUser() {
+    public GetUser(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
+    public User getUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         if (authentication != null && authentication.isAuthenticated()) {
             String username = authentication.getName();
-            return customerRepository.findByname(username);
+            return userRepository.findByname(username);
         }
 
         return null;
     }
-
 }
+
 

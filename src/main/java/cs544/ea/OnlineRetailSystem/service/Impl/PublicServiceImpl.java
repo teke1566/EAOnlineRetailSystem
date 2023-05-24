@@ -18,19 +18,24 @@ public class PublicServiceImpl implements PublicService {
     private final CreditCardRepository creditCardRepository;
     private final AddressRepository addressRepository;
     private final OrderRepository orderRepository;
-    User userHelper = GetUser.getUser();
+    private ItemRepository itemRepository;
 
-    public PublicServiceImpl(UserRepository userRepository, CreditCardRepository creditCardRepository,
-                             AddressRepository addressRepository, OrderRepository orderRepository) {
+    private final GetUser getUser;
+@Autowired
+    public PublicServiceImpl(UserRepository userRepository, CreditCardRepository creditCardRepository, AddressRepository addressRepository, OrderRepository orderRepository, GetUser getUser, ItemRepository itemRepository) {
         this.userRepository = userRepository;
         this.creditCardRepository = creditCardRepository;
         this.addressRepository = addressRepository;
         this.orderRepository = orderRepository;
+        this.getUser = getUser;
+        this.itemRepository = itemRepository;
     }
 
-    @Autowired
-    private ItemRepository itemRepository;
 
+
+    public GetUser getAuthenticatedUser() {
+        return getUser;
+    }
 
     @Override
     public List<Item> getAllItem() {
@@ -53,11 +58,10 @@ public class PublicServiceImpl implements PublicService {
 
     @Override
     public Address addShippingAddress(Address address) {
-
+        User user = getUser.getUser();
         address.setAddressType(AddressType.SHIPPING);
-        userHelper.getShippingAddresses().add(address);
-
-        return userRepository.save(userHelper).getShippingAddresses()
+        user.getShippingAddresses().add(address);
+        return userRepository.save(user).getShippingAddresses()
                 .stream()
                 .filter(a -> a.equals(address))
                 .findFirst()
@@ -68,10 +72,10 @@ public class PublicServiceImpl implements PublicService {
 
     @Override
     public Address addBillingAddress(Address address) {
-
+        User user = getUser.getUser();
         address.setAddressType(AddressType.BILLING);
-        userHelper.setBillingAddress(address);
-        return userRepository.save(userHelper).getBillingAddress();
+        user.setBillingAddress(address);
+        return userRepository.save(user).getBillingAddress();
     }
 
     @Override
@@ -81,13 +85,12 @@ public class PublicServiceImpl implements PublicService {
 
     @Override
     public User updateCustomer(User user) {
-
-        Optional<User> existingUser = userRepository.findById(userHelper.getId());
-        if (existingUser.isPresent()) {
-            List<Role> roles = existingUser.get().getRole();
+        User existingUser = getUser.getUser();
+        if (existingUser != null) {
+            List<Role> roles = existingUser.getRole();
             if (roles.stream().anyMatch(role -> role.getRole() == Roles.CUSTOMER)) {
-                BeanUtils.copyProperties(user, existingUser.get()); // copy properties from new to existing object, excluding id
-                return userRepository.save(existingUser.get());
+                BeanUtils.copyProperties(user, existingUser); // copy properties from new to existing object, excluding id
+                return userRepository.save(existingUser);
             }
         }
         return null;
@@ -96,7 +99,7 @@ public class PublicServiceImpl implements PublicService {
     @Override
     @Transactional
     public void deleteCreditCard(Long creditCardId) {
-
+        User userHelper = getUser.getUser();
         // Check if user exists
         User user = userRepository.findById(userHelper.getId())
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
@@ -119,6 +122,7 @@ public class PublicServiceImpl implements PublicService {
     @Override
     public void deleteBillingAddressById(Long billingAddressId) {
         // the relationship b/n user and address have to be one to one
+        User userHelper = getUser.getUser();
 
         // Check if user exists
         User user = userRepository.findById(userHelper.getId())
@@ -135,6 +139,7 @@ public class PublicServiceImpl implements PublicService {
 
     @Override
     public Address updateBillingAddress(Long billingAddressId, Address address) {
+        User userHelper = getUser.getUser();
 
         // Check if user exists
         User user = userRepository.findById(userHelper.getId())
@@ -164,6 +169,7 @@ public class PublicServiceImpl implements PublicService {
 
     @Override
     public Address updateShippingAddress(Long shippingAddressId, Address address) {
+        User userHelper = getUser.getUser();
 
         // Check if user exists
         User user = userRepository.findById(userHelper.getId())
@@ -194,6 +200,8 @@ public class PublicServiceImpl implements PublicService {
 
     @Override
     public List<Order> getAllOrderByUserId() {
+        User userHelper = getUser.getUser();
+
         //get the current user
         User user = userRepository.findById(userHelper.getId())
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
@@ -203,6 +211,8 @@ public class PublicServiceImpl implements PublicService {
     @Override
     public List<Order> getOrderByItemId(Long itemId) {// what if there are multiple orders with the same item id
         //get the current user
+        User userHelper = getUser.getUser();
+
         User user = userRepository.findById(userHelper.getId())
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
