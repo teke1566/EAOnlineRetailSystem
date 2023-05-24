@@ -35,5 +35,12 @@ public class Item {
     @ManyToOne //Many item can be owned by one merchant
     @JoinColumn(name = "merchant")
     private User merchant;
+    public void decreaseQuantityInStock(int quantity) {
+        if (quantityInStock >= quantity) {
+            quantityInStock -= quantity;
+        } else {
+            throw new IllegalArgumentException("Insufficient quantity in stock.");
+        }
+    }
 }
 
