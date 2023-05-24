@@ -29,7 +29,7 @@ public class MerchantController {
         this.publicService= publicService;
     }
 
-    @GetMapping("/")
+    @GetMapping
     public List<Item> getAllItems(){
         return publicService.getAllItems();
     }

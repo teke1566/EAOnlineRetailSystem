@@ -1,11 +1,15 @@
 package cs544.ea.OnlineRetailSystem.controller;
 
 
+import cs544.ea.OnlineRetailSystem.domain.OrderStatus;
 import cs544.ea.OnlineRetailSystem.domain.User;
+import cs544.ea.OnlineRetailSystem.domain.dto.response.OrderResponse;
 import cs544.ea.OnlineRetailSystem.domain.dto.response.UserResponse;
 import cs544.ea.OnlineRetailSystem.service.AdminService;
+import cs544.ea.OnlineRetailSystem.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,13 +24,14 @@ public class AdminController {
 
     @Autowired
     private AdminService adminService;
+    @Autowired
+    private OrderService orderService;
 
-
-  @GetMapping
+    @GetMapping("/users")
     @ResponseStatus(HttpStatus.OK)
-   public List<UserResponse> findAll() {
+    public List<UserResponse> findAll() {
         return adminService.findAll();
-   }
+    }
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/customer")
@@ -67,5 +72,24 @@ public class AdminController {
     }
 
 
+    @GetMapping
+    public List<OrderResponse> getAllOrders(@RequestParam OrderStatus orderStatus) {
+        if (orderStatus != null)
+            return orderService.getOrdersByStatus(orderStatus);
+        return orderService.getAllOrders();
+    }
 
+    @GetMapping("/{orderId}")
+    public OrderResponse getOrderById(@PathVariable Long orderId) {
+        return orderService.getOrderById(orderId);
+    }
+
+    @PutMapping("/{orderId}/status")
+    public ResponseEntity<OrderResponse> updateOrderStatus(
+            @PathVariable("orderId") Long orderId,
+            @RequestParam("status") OrderStatus status
+    ) {
+        OrderResponse updatedOrder = adminService.changeOrderStatus(orderId, status);
+        return new ResponseEntity<>(updatedOrder, HttpStatus.OK);
+    }
 }

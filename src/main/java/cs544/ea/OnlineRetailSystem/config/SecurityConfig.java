@@ -61,8 +61,10 @@ public class SecurityConfig {
 
                 .requestMatchers(HttpMethod.GET,"/api/v1/admin/*").hasAnyAuthority(Roles.ADMIN.name())
                 .requestMatchers(HttpMethod.DELETE,"/api/v1/admin/**").hasAnyAuthority(Roles.ADMIN.name())
+                .requestMatchers(HttpMethod.PUT,"/api/v1/admin/**").hasAnyAuthority(Roles.ADMIN.name())
 
-  .anyRequest()
+
+                .anyRequest()
                 .authenticated()
                 .and()
                 .sessionManagement()

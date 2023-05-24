@@ -59,11 +59,16 @@ VALUES (11, 'SHIPPING', '123 Main St', 'New York', 'NY', '10001', 'USA'),
 
 -- Insert data into 'users' table
 INSERT INTO users (id, name, email, firstName, lastName, password, billingAddress, defaultShippingAddress)
-VALUES (20, 'johndoe2', 'john.doe2@example.com', 'John', 'Doe', 'johndoe123', 12, 11),
-       (21, 'janedoe2', 'jane.doe2@example.com', 'Jane', 'Doe', 'janedoe123', 14, 13),
-       (22, 'youkim', 'youkim@example.com', 'CUSTOMER', 'User', 'admin123', 14, 15),
-       (23, 'merchant2', 'teke@example.com', 'MERCHANT', 'User', 'merchant123', 12, 16),
-       (24, 'customer2', 'Naod@example.com', 'Customer', 'User', 'customer123', 12, 17);
+VALUES (20, 'johndoe2', 'john.doe2@example.com', 'John', 'Doe', 'johndoe123', 2, 1),
+       (21, 'janedoe2', 'jane.doe2@example.com', 'Jane', 'Doe', 'janedoe123', 4, 3),
+       (22, 'youkim', 'youkim@example.com', 'CUSTOMER', 'User', 'admin123', 4, 5),
+       (23, 'merchant2', 'teke@example.com', 'MERCHANT', 'User', 'merchant123', 2, 6),
+       (24, 'customer2', 'Naod@example.com', 'Customer', 'User', 'customer123', 2, 7);
+
+
+
+
+
 
 
 
@@ -108,17 +113,11 @@ VALUES (11, 20),
 
 -- Item
 INSERT INTO item (name, description, price, image, barcode, quantityinstock, merchant)
-VALUES ( 'Item 1', 'Description 1', 100, 'Image 1', '123456789012', 10, 23),
-       ('Item 2', 'Description 2', 200, 'Image 2', '234567890123', 20, 23),
+VALUES ('Item 1', 'Description 1', 100, 'Image 1', '123456789012', 10, 23),
+       ( 'Item 2', 'Description 2', 200, 'Image 2', '234567890123', 20, 23),
        ( 'Item 3', 'Description 3', 300, 'Image 3', '345678901234', 30, 23),
        ( 'Item 4', 'Description 4', 400, 'Image 4', '456789012345', 40, 23),
        ('Item 5', 'Description 5', 500, 'Image 5', '567890123456', 50, 23);
-INSERT INTO item (itemId, name, description, price, image, barcode, quantityinstock, merchant)
-VALUES (11, 'Item 1', 'Description 1', 100, 'Image 1', '123456789012', 10, 23),
-       (12, 'Item 2', 'Description 2', 200, 'Image 2', '234567890123', 20, 23),
-       (13, 'Item 3', 'Description 3', 300, 'Image 3', '345678901234', 30, 23),
-       (14, 'Item 4', 'Description 4', 400, 'Image 4', '456789012345', 40, 23),
-       (15, 'Item 5', 'Description 5', 500, 'Image 5', '567890123456', 50, 23);
 
 
 -- CreditCard
