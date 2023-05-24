@@ -4,6 +4,7 @@ import cs544.ea.OnlineRetailSystem.domain.Item;
 import cs544.ea.OnlineRetailSystem.domain.Review;
 import cs544.ea.OnlineRetailSystem.service.CustomerService;
 import cs544.ea.OnlineRetailSystem.service.ItemService;
+import cs544.ea.OnlineRetailSystem.service.PublicService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,18 +16,22 @@ public class MerchantController {
 
     private final ItemService itemService;
     private final CustomerService customerService;
+    private final PublicService publicService;
 
 
 
     @Autowired
-    public MerchantController(ItemService itemService, CustomerService customerService) {
+    public MerchantController(ItemService itemService,
+                              CustomerService customerService,
+                              PublicService publicService) {
         this.itemService = itemService;
         this.customerService = customerService;
+        this.publicService= publicService;
     }
 
     @GetMapping
     public List<Item> getAllItems(){
-        return itemService.getAllItems();
+        return publicService.getAllItems();
     }
 
     @GetMapping("/{itemId}")

@@ -37,9 +37,9 @@ public class CustomerController {
     private final CustomerService customerService;
     private final OrderService orderService;
     private final PublicService publicService;
-
     private final CartService cartService;
-@Autowired
+    
+//    @Autowired
     public CustomerController(CustomerService customerService, OrderService orderService
             , PublicService publicService, CartService cartService) {
         this.customerService = customerService;
@@ -49,49 +49,49 @@ public class CustomerController {
     }
 
     //localhost:9098/api/v1/customers/
-    @GetMapping("/")
-    public List<User> getAllCustomers(){
-       return  customerService.getAllCustomers();
-    }
+//    @GetMapping("/") //working
+//    public List<User> getAllCustomers(){
+//       return  customerService.getAllCustomers();
+//    }
     //localhost:9098/api/v1/customers/300
-    @GetMapping("/{customerId}")
-    public User getCustomerById(@PathVariable Long customerId){
-        return customerService.getCustomerById(customerId);
-    }
-    //localhost:9098/api/v1/customers/
-    @PostMapping
-    public User addNewCustomer(@RequestBody User user){
-       return customerService.addCustomer(user);
-    }
-    @PutMapping("/customers/{customerId}")
+//    @GetMapping("/{customerId}")// working
+//    public User getCustomerById(@PathVariable Long customerId){
+//        return customerService.getCustomerById(customerId);
+//    }
+//    //localhost:9098/api/v1/customers/
+//    @PostMapping// working
+//    public User addNewCustomer(@RequestBody User user){
+//       return customerService.addCustomer(user);
+//    }
+    @PutMapping("/{customerId}")//working
     public User updateCustomer(@PathVariable Long customerId,@RequestBody User user){
         return customerService.updateCustomer(customerId,user);
     }
-    @DeleteMapping("/customers/{customerId}")
-    public void deleteCustomer(@PathVariable Long customerId){
-        customerService.deleteCustomerById(customerId);
-    }
+//    @DeleteMapping("/{customerId}")//working
+//    public void deleteCustomer(@PathVariable Long customerId) throws Exception {
+//        customerService.deleteCustomerById(customerId);
+//    }
 
 
     //CreditCard:
-    @GetMapping("/credit-cards")
-    public List<CreditCard> getAllCreditCards(){
-        return customerService.getAllCreditCards();
-    }
-    @GetMapping("/credit-cards/{creditCardId}")
-    public CreditCard getCreditCardById(@PathVariable Long creditCardId){
-        return customerService.getCreditCardById(creditCardId);
-    }
+//    @GetMapping("/credit-cards")// working....get all credit card
+//    public List<CreditCard> getAllCreditCards(){
+//        return customerService.getAllCreditCards();
+//    }
+//    @GetMapping("/credit-cards/{creditCardId}")//working .. getCreditCardById
+//    public CreditCard getCreditCardById(@PathVariable Long creditCardId){
+//        return customerService.getCreditCardById(creditCardId);
+//    }
 
     @PostMapping("/credit-cards")
     public CreditCard addNewCreditCard(@RequestBody CreditCard creditCard){
         return publicService.addCreditCard(creditCard);
     }
-    @PutMapping("/credit-cards/{creditCardId}")
+    @PutMapping("/credit-cards/{creditCardId}")//working
     public CreditCard updateCreditCard(@PathVariable Long creditCardId, @RequestBody CreditCard creditCard){
         return customerService.updateCreditCard(creditCardId,creditCard);
     }
-    @DeleteMapping("/credit-cards/{creditCardId}")
+    @DeleteMapping("/credit-cards/{creditCardId}")// working
     public void deleteCreditCardById(@PathVariable Long creditCardId){
         customerService.deleteCreditCardById(creditCardId);
     }
@@ -112,10 +112,10 @@ public class CustomerController {
         customerService.deleteShippingAddressById(shippingAddressId);
     }
 
-    @GetMapping("/shippingAddresses")
-    public List<Address> getAllShippingAddresses() {
-        return customerService.getAllShippingAddress();
-    }
+//    @GetMapping("/shippingAddresses")
+//    public List<Address> getAllShippingAddresses() {
+//        return customerService.getAllShippingAddress();
+//    }
 
     // Billing Address:
 
@@ -134,63 +134,69 @@ public class CustomerController {
         customerService.deleteBillingAddressById(billingAddressId);
     }
 
-    @GetMapping("/billingAddresses")
-    public List<Address> getAllBillingAddresses() {
-        return customerService.getAllBillingAddress();
+//    @GetMapping("/billingAddresses")
+//    public List<Address> getAllBillingAddresses() {
+//        return customerService.getAllBillingAddress();
+//    }
+//
+    
+    /** CART APIs */
+    
+    // GET /api/v1/customers/cart
+    // get cart for the current customer
+    @GetMapping("/cart")
+    public ResponseEntity<?> getCustomerCart() {
+    	return new ResponseEntity<Cart>(cartService.getCartForCurrentCustomer(), HttpStatus.OK);
     }
     
-    //cart
-    @GetMapping("/{customerId}/cart")
-    public ResponseEntity<?> getCustomerCart(@PathVariable Long customerId) {
+    // POST /api/v1/customers/cart
+    // checkout cart for the current customer
+    @PostMapping("/cart")
+    public ResponseEntity<?> checkoutCart() {
     	try {
-    		return new ResponseEntity<Cart>(cartService.getCartByCustomerId(customerId), HttpStatus.OK);
-    	} catch (EntityNotFoundException e) {
-    		return new ResponseEntity<>(new CustomErrorType(e.getMessage()), HttpStatus.NOT_FOUND);
-    	}
-    }
-    
-    @PostMapping("/{customerId}/cart")
-    public ResponseEntity<?> checkoutCart(@PathVariable Long customerId) {
-    	try {
-    		return new ResponseEntity<OrderResponse>(cartService.checkoutCart(customerId), HttpStatus.OK);
+    		return new ResponseEntity<OrderResponse>(cartService.checkoutCart(), HttpStatus.OK);
     	} catch(EntityNotFoundException e) {
     		return new ResponseEntity<>(new CustomErrorType(e.getMessage()), HttpStatus.NOT_FOUND);
     	}
     }
     
-    @PostMapping("/{customerId}/cart/{itemId}")
-    public ResponseEntity<?> addItemToCart(@PathVariable Long customerId, @RequestBody ItemRequest itemRequest) {
+    // POST /api/v1/customers/cart/items
+    // add Item to Cart
+    @PostMapping("/cart/items")
+    public ResponseEntity<?> addItemToCart(@RequestBody ItemRequest itemRequest) {
     	try {
-    		cartService.addItemToCart(customerId, itemRequest);
+    		cartService.addItemToCart(itemRequest);
     		return new ResponseEntity<>(HttpStatus.OK);
     	} catch(Exception e) {
     		return new ResponseEntity<>(new CustomErrorType(e.getMessage()), HttpStatus.NOT_FOUND);
     	}
     }
     
-    @DeleteMapping("/{customerId}/cart/{itemId}")
-    public ResponseEntity<?> removeItemFromCart(@PathVariable Long customerId, @PathVariable Long itemId) {
+    // DELETE /api/v1/customers/cart/items/:lineItemId
+    // given lineItemId remove Item from Cart
+    @DeleteMapping("/cart/items/{lineItemId}")
+    public ResponseEntity<?> removeItemFromCart(@PathVariable Long lineItemId) {
     	try {
-    		cartService.removeItemFromCart(customerId, itemId);
+    		cartService.removeItemFromCart(lineItemId);
     		return new ResponseEntity<>(HttpStatus.OK);
     	} catch(EntityNotFoundException e) {
     		return new ResponseEntity<>(new CustomErrorType(e.getMessage()), HttpStatus.NOT_FOUND);
     	}
     }
     
-    @DeleteMapping("/{customerId}/cart")
-    public ResponseEntity<?> clearCart(@PathVariable Long customerId) {
-    	try {
-    		cartService.clearCart(customerId);
-    		return new ResponseEntity<>(HttpStatus.OK);
-    	} catch(EntityNotFoundException e) {
-    		return new ResponseEntity<>(new CustomErrorType(e.getMessage()), HttpStatus.NOT_FOUND);
-    	}
+    // DELETE /api/v1/customers/cart
+    // clear the current customer cart
+    @DeleteMapping("/cart")
+    public ResponseEntity<?> clearCart() {
+		cartService.clearCart();
+		return new ResponseEntity<>(HttpStatus.OK);
     }
-    
     
     
     //Orders
+    
+    // GET /api/v1/customers/orders?orderStatus=PLACED
+    // GET /api/v1/customers/orders
     @GetMapping("/{customerId}/orders")
     public List<OrderResponse> getCustomerAllOrders(@PathVariable Long customerId, @RequestParam OrderStatus orderStatus) {
     	if (orderStatus != null)
@@ -198,7 +204,7 @@ public class CustomerController {
     	return orderService.getCustomerAllOrders(customerId);
     }
     
-    @GetMapping("/{customerId}/orders/{orderId}")
+    @GetMapping("/{customerId}/orders/{orderId}") //
     public ResponseEntity<?> getCustomerOrderById(@PathVariable Long customerId, @PathVariable Long orderId) {
     	try {
     		return new ResponseEntity<OrderResponse>(orderService.getCustomerOrderById(customerId, orderId), HttpStatus.OK);

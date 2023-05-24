@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface PublicService {
 
-    public List<Item> getAllItem(); // will be accessed by Admin and Customer
+    public List<Item> getAllItems(); // will be accessed by Admin and Customer
     public void deleteItemById(Long itemId);// will be accessed by Admin and Merchant(we have to check whether the item is belong to the merchant or not)
 
     public Item getItemById(Long itemId);// will be accessed by customer and Merchant(will find item by item id and will check if the item belong to merchant)

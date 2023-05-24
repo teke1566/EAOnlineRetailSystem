@@ -17,16 +17,18 @@ import java.util.Optional;
 
 class ItemServiceImplTest {
 
-    @Mock
+    @Mock  //the behaviour of real object that allowing to control the process during test
     private ItemRepository itemRepository;
 
-    @InjectMocks
+    @InjectMocks  //It allows you to automatically inject the mocks without explicitly creating them.
     private ItemServiceImpl itemService;
 
-    @BeforeEach
+    @BeforeEach // This annotation marks the setUp method to be executed before each test method. It is used to perform any necessary setup or initialization steps before running the tests.
     void setUp() {
         MockitoAnnotations.openMocks(this);
     }
+
+    //all those methods use similar process the test methods create sample data, mock repository behavior, call the corresponding service methods, and then use assertions to validate the expected results.
 
     @Test
     void testGetAllItems() {
@@ -140,10 +142,10 @@ class ItemServiceImplTest {
         Mockito.when(itemRepository.findByNameContainingIgnoreCase(keyword)).thenReturn(itemList);
 
         // Call the service method
-       // List<Item> result = itemService.searchItems(keyword);
+        List<Item> result = itemService.searchItemByName(keyword);
 
         // Verify the result
-       // Assertions.assertEquals(2, result.size());
+        Assertions.assertEquals(2, result.size());
         Mockito.verify(itemRepository, Mockito.times(1)).findByNameContainingIgnoreCase(keyword);
     }
 
