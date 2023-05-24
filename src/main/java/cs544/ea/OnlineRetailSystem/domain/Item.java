@@ -28,8 +28,8 @@ public class Item {
     @Column(name = "quantityinstock")
     private Integer quantityInStock;
 
-    @OneToMany(mappedBy = "item")
     @JsonIgnore
+    @OneToMany(mappedBy = "item", cascade = CascadeType.ALL)
     private List<Review> reviews;
 
     @ManyToOne //Many item can be owned by one merchant

@@ -19,7 +19,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
@@ -46,9 +45,12 @@ public class SecurityConfig {
                 .csrf().disable().cors().and()
                 .authorizeHttpRequests()
 
-               .requestMatchers("/api/v1/authenticate/**").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/v1/items/**").permitAll()
-                .requestMatchers(HttpMethod.POST,"/api/v1/items/*").hasAnyAuthority(Roles.CUSTOMER.name())
+                .requestMatchers("/api/v1/authenticate/**").permitAll()
+                .requestMatchers(HttpMethod.GET,"/api/v1/customer/*").hasAnyAuthority(Roles.CUSTOMER.name())
+                .requestMatchers(HttpMethod.DELETE,"/api/v1/customer/**").hasAnyAuthority(Roles.CUSTOMER.name())
+                .requestMatchers(HttpMethod.PUT,"/api/v1/customer/**").hasAnyAuthority(Roles.CUSTOMER.name())
+                .requestMatchers(HttpMethod.PUT,"/api/v1/customer/**").hasAnyAuthority(Roles.CUSTOMER.name())
+                .requestMatchers(HttpMethod.GET,"/api/v1/items/*").permitAll()
 
                 .requestMatchers(HttpMethod.GET,"/api/v1/admin/*").hasAnyAuthority(Roles.ADMIN.name())
                 .requestMatchers(HttpMethod.DELETE,"/api/v1/admin/**").hasAnyAuthority(Roles.ADMIN.name())

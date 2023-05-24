@@ -24,7 +24,7 @@ public class MerchantController {
         this.customerService = customerService;
     }
 
-    @GetMapping
+    @GetMapping("/")
     public List<Item> getAllItems(){
         return itemService.getAllItems();
     }
@@ -50,8 +50,8 @@ public class MerchantController {
     }
 
     @GetMapping("/search")
-    public List<Item> searchItems(@RequestParam String Keyword){
-        return itemService.searchItems(Keyword);
+    public List<Item> searchItemsByName(@RequestParam String Keyword){
+        return itemService.searchItemByName(Keyword);
     }
 
 
