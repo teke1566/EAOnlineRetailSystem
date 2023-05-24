@@ -29,7 +29,7 @@ public class MerchantController {
         this.publicService= publicService;
     }
 
-    @GetMapping
+    @GetMapping("/") //this should be just empty e.g. /api/v1/items
     public List<Item> getAllItems(){
         return publicService.getAllItems();
     }
