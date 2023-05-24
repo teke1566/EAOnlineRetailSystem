@@ -59,7 +59,10 @@ public class SecurityConfig {
                 .requestMatchers("/api/v1/admin/**").hasAnyAuthority(Roles.ADMIN.name())
 
 
-                .anyRequest()
+                .requestMatchers(HttpMethod.GET,"/api/v1/admin/*").hasAnyAuthority(Roles.ADMIN.name())
+                .requestMatchers(HttpMethod.DELETE,"/api/v1/admin/**").hasAnyAuthority(Roles.ADMIN.name())
+
+  .anyRequest()
                 .authenticated()
                 .and()
                 .sessionManagement()
@@ -69,8 +72,6 @@ public class SecurityConfig {
 
         return http.build();
     }
-
-
 
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {

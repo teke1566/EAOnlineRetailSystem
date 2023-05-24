@@ -7,7 +7,11 @@ import cs544.ea.OnlineRetailSystem.service.PublicService;
 import jakarta.transaction.Transactional;
 import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
 import org.springframework.beans.BeanUtils;
+
 import org.springframework.security.core.context.SecurityContextHolder;
+=======
+import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -55,6 +59,7 @@ public class PublicServiceImpl implements PublicService {
 
     @Override
     public Address addShippingAddress(Address address) {
+
         address.setAddressType(AddressType.SHIPPING);
         userHelper.getShippingAddresses().add(address);
 
@@ -66,8 +71,11 @@ public class PublicServiceImpl implements PublicService {
     }
 
 
+
+
     @Override
     public Address addBillingAddress(Address address) {
+
         address.setAddressType(AddressType.BILLING);
         userHelper.setBillingAddress(address);
         return userRepository.save(userHelper).getBillingAddress();

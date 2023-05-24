@@ -1,6 +1,10 @@
 package cs544.ea.OnlineRetailSystem.domain;
 
+
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+=======
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -28,16 +32,20 @@ public class Item {
     @Column(name = "quantityinstock")
     private Integer quantityInStock;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "item", cascade = CascadeType.ALL)
     @JsonManagedReference
     private List<Review> reviews;
 
-    @ManyToOne(cascade = CascadeType.ALL) //Many item can be owned by one merchant
+    @ManyToOne //Many item can be owned by one merchant
     @JoinColumn(name = "merchant")
     private User merchant;
-    
     public void decreaseQuantityInStock(int quantity) {
-    	this.setQuantityInStock(quantityInStock - quantity);
+        if (quantityInStock >= quantity) {
+            quantityInStock -= quantity;
+        } else {
+            throw new IllegalArgumentException("Insufficient quantity in stock.");
+        }
     }
 }
 

@@ -4,10 +4,10 @@ import cs544.ea.OnlineRetailSystem.domain.*;
 import cs544.ea.OnlineRetailSystem.repository.*;
 import cs544.ea.OnlineRetailSystem.service.CustomerService;
 import jakarta.persistence.EntityNotFoundException;
-import cs544.ea.OnlineRetailSystem.service.PublicService;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -25,6 +25,7 @@ public class CustomerServiceImpl implements CustomerService {
     private final CartRepository cartRepository;
 
     private final LineItemRepository lineItemRepository;
+
     private final OrderRepository orderRepository;
     private final ReviewRepository reviewRepository;
 
@@ -40,6 +41,7 @@ public class CustomerServiceImpl implements CustomerService {
         this.creditCardRepository=creditCardRepository;
         this.orderRepository=orderRepository;
         this.reviewRepository=reviewRepository;
+
     }
 
     @Override
