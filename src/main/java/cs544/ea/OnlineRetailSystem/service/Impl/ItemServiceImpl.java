@@ -74,8 +74,8 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<Item> searchItemByName(String Keyword) {
-        return itemRepository.findByNameContainingIgnoreCase(Keyword);
+    public List<Item> searchItemByName(String keyword) {
+        return itemRepository.findByNameContainingIgnoreCase(keyword);
     }
 
 

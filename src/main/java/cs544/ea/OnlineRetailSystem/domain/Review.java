@@ -12,7 +12,7 @@ import lombok.Data;
 //only buyers of an item can review the item.order status have to be DELIVERED
 public class Review {
 	@Id
-	@GeneratedValue
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "reviewid")
 	private Long id;
 	

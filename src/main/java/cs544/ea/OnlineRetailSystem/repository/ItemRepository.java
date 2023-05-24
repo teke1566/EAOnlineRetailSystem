@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 @Repository
 public interface ItemRepository extends JpaRepository<Item, Long>{
-    List<Item> findByNameContainingIgnoreCase(String Keyword);
+    List<Item> findByNameContainingIgnoreCase(String keyword);
 
     @Query("SELECT i FROM Item i WHERE i.merchant.id = :merchantId")
     List<Item> findItemsByMerchantId(@Param("merchantId") Long merchantId);

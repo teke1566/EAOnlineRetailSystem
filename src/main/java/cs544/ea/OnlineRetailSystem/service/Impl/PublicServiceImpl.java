@@ -200,7 +200,7 @@ public class PublicServiceImpl implements PublicService {
     }
 
     @Override
-    public List<Order> getOrderByItemId(Long itemId) {// what if there are multiple orders with the same item id
+    public List<Order> getOrderByItemId(Long itemId) {// what if there are multiple orders with the same item id(reason why it returns List)
         //get the current user
         User user = userRepository.findById(userHelper.getId())
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
