@@ -2,7 +2,11 @@ package cs544.ea.OnlineRetailSystem.domain;
 
 import java.time.LocalDateTime;
 
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -12,7 +16,7 @@ import lombok.Data;
 //only buyers of an item can review the item.order status have to be DELIVERED
 public class Review {
 	@Id
-	@GeneratedValue
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "reviewid")
 	private Long id;
 	
@@ -33,6 +37,7 @@ public class Review {
 	private User buyer;
 
 	@ManyToOne(cascade = CascadeType.ALL)
+	@JsonBackReference
 	@JoinColumn(name = "itmeid")
 	@JsonIgnore
 	private Item item;

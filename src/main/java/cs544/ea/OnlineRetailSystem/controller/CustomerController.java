@@ -39,6 +39,7 @@ public class CustomerController {
     private final PublicService publicService;
 
     private final CartService cartService;
+    
 @Autowired
     public CustomerController(CustomerService customerService, OrderService orderService
             , PublicService publicService, CartService cartService) {
@@ -49,49 +50,49 @@ public class CustomerController {
     }
 
     //localhost:9098/api/v1/customers/
-    @GetMapping("/")
-    public List<User> getAllCustomers(){
-       return  customerService.getAllCustomers();
-    }
+//    @GetMapping("/") //working
+//    public List<User> getAllCustomers(){
+//       return  customerService.getAllCustomers();
+//    }
     //localhost:9098/api/v1/customers/300
-    @GetMapping("/{customerId}")
-    public User getCustomerById(@PathVariable Long customerId){
-        return customerService.getCustomerById(customerId);
-    }
-    //localhost:9098/api/v1/customers/
-    @PostMapping
-    public User addNewCustomer(@RequestBody User user){
-       return customerService.addCustomer(user);
-    }
-    @PutMapping("/customers/{customerId}")
+//    @GetMapping("/{customerId}")// working
+//    public User getCustomerById(@PathVariable Long customerId){
+//        return customerService.getCustomerById(customerId);
+//    }
+//    //localhost:9098/api/v1/customers/
+//    @PostMapping// working
+//    public User addNewCustomer(@RequestBody User user){
+//       return customerService.addCustomer(user);
+//    }
+    @PutMapping("/{customerId}")//working
     public User updateCustomer(@PathVariable Long customerId,@RequestBody User user){
         return customerService.updateCustomer(customerId,user);
     }
-    @DeleteMapping("/customers/{customerId}")
-    public void deleteCustomer(@PathVariable Long customerId){
-        customerService.deleteCustomerById(customerId);
-    }
+//    @DeleteMapping("/{customerId}")//working
+//    public void deleteCustomer(@PathVariable Long customerId) throws Exception {
+//        customerService.deleteCustomerById(customerId);
+//    }
 
 
     //CreditCard:
-    @GetMapping("/credit-cards")
-    public List<CreditCard> getAllCreditCards(){
-        return customerService.getAllCreditCards();
-    }
-    @GetMapping("/credit-cards/{creditCardId}")
-    public CreditCard getCreditCardById(@PathVariable Long creditCardId){
-        return customerService.getCreditCardById(creditCardId);
-    }
+//    @GetMapping("/credit-cards")// working....get all credit card
+//    public List<CreditCard> getAllCreditCards(){
+//        return customerService.getAllCreditCards();
+//    }
+//    @GetMapping("/credit-cards/{creditCardId}")//working .. getCreditCardById
+//    public CreditCard getCreditCardById(@PathVariable Long creditCardId){
+//        return customerService.getCreditCardById(creditCardId);
+//    }
 
     @PostMapping("/credit-cards")
     public CreditCard addNewCreditCard(@RequestBody CreditCard creditCard){
         return publicService.addCreditCard(creditCard);
     }
-    @PutMapping("/credit-cards/{creditCardId}")
+    @PutMapping("/credit-cards/{creditCardId}")//working
     public CreditCard updateCreditCard(@PathVariable Long creditCardId, @RequestBody CreditCard creditCard){
         return customerService.updateCreditCard(creditCardId,creditCard);
     }
-    @DeleteMapping("/credit-cards/{creditCardId}")
+    @DeleteMapping("/credit-cards/{creditCardId}")// working
     public void deleteCreditCardById(@PathVariable Long creditCardId){
         customerService.deleteCreditCardById(creditCardId);
     }
@@ -112,10 +113,10 @@ public class CustomerController {
         customerService.deleteShippingAddressById(shippingAddressId);
     }
 
-    @GetMapping("/shippingAddresses")
-    public List<Address> getAllShippingAddresses() {
-        return customerService.getAllShippingAddress();
-    }
+//    @GetMapping("/shippingAddresses")
+//    public List<Address> getAllShippingAddresses() {
+//        return customerService.getAllShippingAddress();
+//    }
 
     // Billing Address:
 
@@ -134,11 +135,11 @@ public class CustomerController {
         customerService.deleteBillingAddressById(billingAddressId);
     }
 
-    @GetMapping("/billingAddresses")
-    public List<Address> getAllBillingAddresses() {
-        return customerService.getAllBillingAddress();
-    }
-    
+//    @GetMapping("/billingAddresses")
+//    public List<Address> getAllBillingAddresses() {
+//        return customerService.getAllBillingAddress();
+//    }
+//
     //cart
     @GetMapping("/{customerId}/cart")
     public ResponseEntity<?> getCustomerCart(@PathVariable Long customerId) {
@@ -158,7 +159,7 @@ public class CustomerController {
     	}
     }
     
-    @PostMapping("/{customerId}/cart/{itemId}")
+    @PostMapping("/{customerId}/cart/{itemId}")//add Item to Cart
     public ResponseEntity<?> addItemToCart(@PathVariable Long customerId, @RequestBody ItemRequest itemRequest) {
     	try {
     		cartService.addItemToCart(customerId, itemRequest);
@@ -168,7 +169,7 @@ public class CustomerController {
     	}
     }
     
-    @DeleteMapping("/{customerId}/cart/{itemId}")
+    @DeleteMapping("/{customerId}/cart/{itemId}")//remove Item from Cart
     public ResponseEntity<?> removeItemFromCart(@PathVariable Long customerId, @PathVariable Long itemId) {
     	try {
     		cartService.removeItemFromCart(customerId, itemId);
@@ -178,7 +179,7 @@ public class CustomerController {
     	}
     }
     
-    @DeleteMapping("/{customerId}/cart")
+    @DeleteMapping("/{customerId}/cart")// clear customer cart
     public ResponseEntity<?> clearCart(@PathVariable Long customerId) {
     	try {
     		cartService.clearCart(customerId);
@@ -198,7 +199,7 @@ public class CustomerController {
     	return orderService.getCustomerAllOrders(customerId);
     }
     
-    @GetMapping("/{customerId}/orders/{orderId}")
+    @GetMapping("/{customerId}/orders/{orderId}") //
     public ResponseEntity<?> getCustomerOrderById(@PathVariable Long customerId, @PathVariable Long orderId) {
     	try {
     		return new ResponseEntity<OrderResponse>(orderService.getCustomerOrderById(customerId, orderId), HttpStatus.OK);

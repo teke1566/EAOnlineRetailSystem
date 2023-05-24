@@ -15,7 +15,7 @@ public interface CustomerService {
 
     public List<User> getAllCustomers();
 
-    public void deleteCustomerById(Long customerId);
+    public void deleteCustomerById(Long customerId) throws Exception;
 
     public User updateCustomer(Long customerId, User user);
 

@@ -5,8 +5,12 @@ import cs544.ea.OnlineRetailSystem.helper.GetUser;
 import cs544.ea.OnlineRetailSystem.repository.*;
 import cs544.ea.OnlineRetailSystem.service.PublicService;
 import jakarta.transaction.Transactional;
+import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
 import org.springframework.beans.BeanUtils;
+
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,22 +22,25 @@ public class PublicServiceImpl implements PublicService {
     private final CreditCardRepository creditCardRepository;
     private final AddressRepository addressRepository;
     private final OrderRepository orderRepository;
-    User userHelper = GetUser.getUser();
+    private  final ItemRepository itemRepository;
+
+    @Autowired
+    GetUser getUser;
 
     public PublicServiceImpl(UserRepository userRepository, CreditCardRepository creditCardRepository,
-                             AddressRepository addressRepository, OrderRepository orderRepository) {
+                             AddressRepository addressRepository, OrderRepository orderRepository,
+                             ItemRepository itemRepository) {
         this.userRepository = userRepository;
         this.creditCardRepository = creditCardRepository;
         this.addressRepository = addressRepository;
         this.orderRepository = orderRepository;
+        this.itemRepository=itemRepository;
     }
-
-    @Autowired
-    private ItemRepository itemRepository;
 
 
     @Override
-    public List<Item> getAllItem() {
+    public List<Item> getAllItems() {
+       // System.out.println("the current active user is :"+getUser.getUser());
         return itemRepository.findAll();
     }
 
@@ -43,6 +50,7 @@ public class PublicServiceImpl implements PublicService {
         itemRepository.delete(item);
 
     }
+
 
 
     @Override
@@ -55,9 +63,9 @@ public class PublicServiceImpl implements PublicService {
     public Address addShippingAddress(Address address) {
 
         address.setAddressType(AddressType.SHIPPING);
-        userHelper.getShippingAddresses().add(address);
+        getUser.getUser().getShippingAddresses().add(address);
 
-        return userRepository.save(userHelper).getShippingAddresses()
+        return userRepository.save(getUser.getUser()).getShippingAddresses()
                 .stream()
                 .filter(a -> a.equals(address))
                 .findFirst()
@@ -66,12 +74,13 @@ public class PublicServiceImpl implements PublicService {
 
 
 
+
     @Override
     public Address addBillingAddress(Address address) {
 
         address.setAddressType(AddressType.BILLING);
-        userHelper.setBillingAddress(address);
-        return userRepository.save(userHelper).getBillingAddress();
+        getUser.getUser().setBillingAddress(address);
+        return userRepository.save(getUser.getUser()).getBillingAddress();
     }
 
     @Override
@@ -82,7 +91,7 @@ public class PublicServiceImpl implements PublicService {
     @Override
     public User updateCustomer(User user) {
 
-        Optional<User> existingUser = userRepository.findById(userHelper.getId());
+        Optional<User> existingUser = userRepository.findById(getUser.getUser().getId());
         if (existingUser.isPresent()) {
             List<Role> roles = existingUser.get().getRole();
             if (roles.stream().anyMatch(role -> role.getRole() == Roles.CUSTOMER)) {
@@ -98,7 +107,7 @@ public class PublicServiceImpl implements PublicService {
     public void deleteCreditCard(Long creditCardId) {
 
         // Check if user exists
-        User user = userRepository.findById(userHelper.getId())
+        User user = userRepository.findById(getUser.getUser().getId())
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
         // Check if credit card exists and belongs to the user
@@ -121,7 +130,7 @@ public class PublicServiceImpl implements PublicService {
         // the relationship b/n user and address have to be one to one
 
         // Check if user exists
-        User user = userRepository.findById(userHelper.getId())
+        User user = userRepository.findById(getUser.getUser().getId())
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
         //CHeck if the address is found and belongs to the user
@@ -137,7 +146,7 @@ public class PublicServiceImpl implements PublicService {
     public Address updateBillingAddress(Long billingAddressId, Address address) {
 
         // Check if user exists
-        User user = userRepository.findById(userHelper.getId())
+        User user = userRepository.findById(getUser.getUser().getId())
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
         //Check if the address is found and belongs to the user
@@ -166,7 +175,7 @@ public class PublicServiceImpl implements PublicService {
     public Address updateShippingAddress(Long shippingAddressId, Address address) {
 
         // Check if user exists
-        User user = userRepository.findById(userHelper.getId())
+        User user = userRepository.findById(getUser.getUser().getId())
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
         //Find the address to be updated in the user's shipping addresses
@@ -195,15 +204,15 @@ public class PublicServiceImpl implements PublicService {
     @Override
     public List<Order> getAllOrderByUserId() {
         //get the current user
-        User user = userRepository.findById(userHelper.getId())
+        User user = userRepository.findById(getUser.getUser().getId())
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
         return orderRepository.findOrderByUserId(user.getId());
     }
 
     @Override
-    public List<Order> getOrderByItemId(Long itemId) {// what if there are multiple orders with the same item id
+    public List<Order> getOrderByItemId(Long itemId) {// what if there are multiple orders with the same item id(reason why it returns List)
         //get the current user
-        User user = userRepository.findById(userHelper.getId())
+        User user = userRepository.findById(getUser.getUser().getId())
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
         return orderRepository.findByItemIdAndUserId(itemId, user.getId());

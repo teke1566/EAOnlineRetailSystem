@@ -44,5 +44,4 @@ public class User {
     @ManyToMany(fetch = FetchType.EAGER,cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<Role> role;
 
-
 }
