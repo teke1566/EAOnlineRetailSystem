@@ -2,6 +2,7 @@ package cs544.ea.OnlineRetailSystem.domain;
 
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -32,6 +33,7 @@ public class Review {
 	private User buyer;
 
 	@ManyToOne(cascade = CascadeType.ALL)
+	@JsonBackReference
 	@JoinColumn(name = "itmeid")
 	private Item item;
 

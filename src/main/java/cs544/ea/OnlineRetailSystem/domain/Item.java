@@ -1,5 +1,6 @@
 package cs544.ea.OnlineRetailSystem.domain;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -28,6 +29,7 @@ public class Item {
     private Integer quantityInStock;
 
     @OneToMany(mappedBy = "item", cascade = CascadeType.ALL)
+    @JsonManagedReference
     private List<Review> reviews;
 
     @ManyToOne(cascade = CascadeType.ALL) //Many item can be owned by one merchant

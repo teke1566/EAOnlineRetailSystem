@@ -2,13 +2,12 @@ package cs544.ea.OnlineRetailSystem.service.Impl;
 
 import cs544.ea.OnlineRetailSystem.domain.*;
 import cs544.ea.OnlineRetailSystem.helper.GetUser;
-import cs544.ea.OnlineRetailSystem.repository.AddressRepository;
-import cs544.ea.OnlineRetailSystem.repository.CreditCardRepository;
-import cs544.ea.OnlineRetailSystem.repository.OrderRepository;
-import cs544.ea.OnlineRetailSystem.repository.UserRepository;
+import cs544.ea.OnlineRetailSystem.repository.*;
 import cs544.ea.OnlineRetailSystem.service.PublicService;
 import jakarta.transaction.Transactional;
+import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
 import org.springframework.beans.BeanUtils;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,18 +19,18 @@ public class PublicServiceImpl implements PublicService {
     private final CreditCardRepository creditCardRepository;
     private final AddressRepository addressRepository;
     private final OrderRepository orderRepository;
+    private  final ItemRepository itemRepository;
     User userHelper = GetUser.getUser();
 
     public PublicServiceImpl(UserRepository userRepository, CreditCardRepository creditCardRepository,
-                             AddressRepository addressRepository, OrderRepository orderRepository) {
+                             AddressRepository addressRepository, OrderRepository orderRepository,
+                             ItemRepository itemRepository) {
         this.userRepository = userRepository;
         this.creditCardRepository = creditCardRepository;
         this.addressRepository = addressRepository;
         this.orderRepository = orderRepository;
+        this.itemRepository=itemRepository;
     }
-
-    @Autowired
-    private ItemRepository itemRepository;
 
 
     @Override
@@ -46,10 +45,7 @@ public class PublicServiceImpl implements PublicService {
 
     }
 
-    @Override
-    public void deleteItemById(Long itemId) {
 
-    }
 
     @Override
     public Item getItemById(Long itemId) {
@@ -59,34 +55,22 @@ public class PublicServiceImpl implements PublicService {
 
     @Override
     public Address addShippingAddress(Address address) {
-        User user = getUser();
         address.setAddressType(AddressType.SHIPPING);
-        user.getShippingAddresses().add(address);
+        userHelper.getShippingAddresses().add(address);
 
-        return customerRepository.save(user).getShippingAddresses()
+        return userRepository.save(userHelper).getShippingAddresses()
                 .stream()
                 .filter(a -> a.equals(address))
                 .findFirst()
                 .orElse(null);
     }
 
-    private User getUser() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-        if (authentication != null && authentication.isAuthenticated()) {
-            String username = authentication.getName();
-            return customerRepository.findByname(username);
-        }
-
-        return null;
-    }
 
     @Override
     public Address addBillingAddress(Address address) {
-        User user = getUser();
         address.setAddressType(AddressType.BILLING);
-        user.setBillingAddress(address);
-        return customerRepository.save(user).getBillingAddress();
+        userHelper.setBillingAddress(address);
+        return userRepository.save(userHelper).getBillingAddress();
     }
 
     @Override
@@ -224,9 +208,5 @@ public class PublicServiceImpl implements PublicService {
         return orderRepository.findByItemIdAndUserId(itemId, user.getId());
     }
 
-	@Override
-	public void deleteItemById(Long itemId) {
-		// TODO Auto-generated method stub
-		
-	}
+
 }

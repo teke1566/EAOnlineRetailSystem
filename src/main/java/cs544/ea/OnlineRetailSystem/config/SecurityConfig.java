@@ -45,12 +45,18 @@ public class SecurityConfig {
                 .csrf().disable().cors().and()
                 .authorizeHttpRequests()
 
+//                .requestMatchers("/api/v1/authenticate/**").permitAll()
+//                .requestMatchers(HttpMethod.GET,"/api/v1/customer/*").hasAnyAuthority(Roles.CUSTOMER.name())
+//                .requestMatchers(HttpMethod.DELETE,"/api/v1/customer/**").hasAnyAuthority(Roles.CUSTOMER.name())
+//                .requestMatchers(HttpMethod.PUT,"/api/v1/customer/**").hasAnyAuthority(Roles.CUSTOMER.name())
+//                .requestMatchers(HttpMethod.PUT,"/api/v1/customer/**").hasAnyAuthority(Roles.CUSTOMER.name())
+//                .requestMatchers("/api/v1/items/*").permitAll()
+
+
                 .requestMatchers("/api/v1/authenticate/**").permitAll()
-                .requestMatchers(HttpMethod.GET,"/api/v1/customer/*").hasAnyAuthority(Roles.CUSTOMER.name())
-                .requestMatchers(HttpMethod.DELETE,"/api/v1/customer/**").hasAnyAuthority(Roles.CUSTOMER.name())
-                .requestMatchers(HttpMethod.PUT,"/api/v1/customer/**").hasAnyAuthority(Roles.CUSTOMER.name())
-                .requestMatchers(HttpMethod.PUT,"/api/v1/customer/**").hasAnyAuthority(Roles.CUSTOMER.name())
-                .requestMatchers(HttpMethod.GET,"/api/v1/items/*").permitAll()
+                .requestMatchers("/api/v1/customers/**").hasAnyAuthority(Roles.CUSTOMER.name())
+                .requestMatchers("/api/v1/items/**").hasAnyAuthority(Roles.MERCHANT.name())
+                .requestMatchers("/api/v1/admin/**").hasAnyAuthority(Roles.ADMIN.name())
 
 
                 .anyRequest()

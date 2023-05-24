@@ -37,11 +37,16 @@ public class CustomerController {
     private final OrderService orderService;
 
     private final CartService cartService;
+    private final PublicService publicService;
     
-    public CustomerController(CustomerService customerService, OrderService orderService, CartService cartService){
+    public CustomerController(CustomerService customerService,
+                              OrderService orderService,
+                              CartService cartService,
+                              PublicService publicService){
         this.customerService = customerService;
         this.orderService = orderService;
         this.cartService = cartService;
+        this.publicService=publicService;
     }
     //localhost:9098/api/v1/customers/
     @GetMapping("/")
@@ -58,11 +63,11 @@ public class CustomerController {
     public User addNewCustomer(@RequestBody User user){
        return customerService.addCustomer(user);
     }
-    @PutMapping("/customers/{customerId}")
+    @PutMapping("/{customerId}")
     public User updateCustomer(@PathVariable Long customerId,@RequestBody User user){
         return customerService.updateCustomer(customerId,user);
     }
-    @DeleteMapping("/customers/{customerId}")
+    @DeleteMapping("/{customerId}")
     public void deleteCustomer(@PathVariable Long customerId){
         customerService.deleteCustomerById(customerId);
     }

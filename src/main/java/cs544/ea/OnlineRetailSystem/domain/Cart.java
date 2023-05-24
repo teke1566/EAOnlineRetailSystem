@@ -3,6 +3,7 @@ package cs544.ea.OnlineRetailSystem.domain;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -13,10 +14,12 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @Entity
 @Table(name = "cart")
+@NoArgsConstructor
 public class Cart {
 
 	@Id
@@ -29,6 +32,7 @@ public class Cart {
 	private User customer;
 
 	@OneToMany(mappedBy = "cart", cascade = CascadeType.ALL)
+	@JsonManagedReference
 	private List<LineItem> lineItems;
 
 	public Cart(User customer) {

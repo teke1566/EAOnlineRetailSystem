@@ -33,6 +33,11 @@ public class CustomerServiceImpl implements CustomerService {
                                CreditCardRepository creditCardRepository,
                                CartRepository cartRepository,
                                LineItemRepository lineItemRepository) {
+        this.customerRepository=customerRepository;
+        this.lineItemRepository=lineItemRepository;
+        this.cartRepository=cartRepository;
+        this.creditCardRepository=creditCardRepository;
+    }
 
     @Override
     public List<User> getAllCustomers() {
@@ -201,7 +206,6 @@ public class CustomerServiceImpl implements CustomerService {
         return billingAddresses;
     }
 
-=======
 //    @Override
 //    public Address addBillingAddress(Address address) {
 //        User user = getUser(); // Retrieve the user from the current context, or fetch it from the repository
