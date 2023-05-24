@@ -45,5 +45,4 @@ public class User {
     private List<Role> role;
 
 
-
 }

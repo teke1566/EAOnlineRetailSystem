@@ -47,8 +47,19 @@ public class ItemServiceImpl implements ItemService {
         return itemRepository.findById(item).orElseThrow(()-> new IllegalArgumentException("Item not found"));
     }//this done in publicService
 
+
     @Override
     public Item addItem(Item item) {
+        Long merchantId = item.getItemId();
+
+        // Fetch the merchant from the database using the merchantId
+        User merchant = userRepository.findById(merchantId)
+                .orElseThrow(() -> new IllegalArgumentException("Merchant not found"));
+
+        // Set the merchant for the item
+        item.setMerchant(merchant);
+
+        // Save the item
         return itemRepository.save(item);
     }
 
@@ -111,16 +122,18 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public Order getOrderById(Long id) {//to do by other
-
-        Order order = getOrderById(id);
-        return orderRepository.getReferenceById(order.getId());
-
+    public Order getOrderById(Long id) {
+        return orderRepository.getReferenceById(id);
     }
+
 
 
     @Override
     public List<Item> getAllItems() {
         return itemRepository.findAll();
+    }
+
+    public List<Item> searchItems(String keyword) {
+        return itemRepository.findByNameContainingIgnoreCase(keyword);
     }
 }

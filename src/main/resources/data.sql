@@ -111,12 +111,12 @@ VALUES (1, 20),
        (5, 24);
 
 -- Item
-INSERT INTO item (itemId, name, description, price, image, barcode, quantityinstock, merchant)
-VALUES (1, 'Item 1', 'Description 1', 100, 'Image 1', '123456789012', 10, 23),
-       (2, 'Item 2', 'Description 2', 200, 'Image 2', '234567890123', 20, 23),
-       (3, 'Item 3', 'Description 3', 300, 'Image 3', '345678901234', 30, 23),
-       (4, 'Item 4', 'Description 4', 400, 'Image 4', '456789012345', 40, 23),
-       (5, 'Item 5', 'Description 5', 500, 'Image 5', '567890123456', 50, 23);
+INSERT INTO item (name, description, price, image, barcode, quantityinstock, merchant)
+VALUES ( 'Item 1', 'Description 1', 100, 'Image 1', '123456789012', 10, 23),
+       ('Item 2', 'Description 2', 200, 'Image 2', '234567890123', 20, 23),
+       ( 'Item 3', 'Description 3', 300, 'Image 3', '345678901234', 30, 23),
+       ( 'Item 4', 'Description 4', 400, 'Image 4', '456789012345', 40, 23),
+       ('Item 5', 'Description 5', 500, 'Image 5', '567890123456', 50, 23);
 
 
 -- CreditCard
