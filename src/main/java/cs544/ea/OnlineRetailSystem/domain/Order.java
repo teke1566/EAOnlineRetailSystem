@@ -55,4 +55,13 @@ public class Order {
 		this.setOrderDate(LocalDateTime.now());
 		this.setLineItems(new ArrayList<LineItem>());
 	}
+
+	public boolean isDelivered(Order order) {
+		if (order.getStatus().equals(OrderStatus.DELIVERED)){
+			return true;
+		}
+		return false;
+	}
+
+
 }

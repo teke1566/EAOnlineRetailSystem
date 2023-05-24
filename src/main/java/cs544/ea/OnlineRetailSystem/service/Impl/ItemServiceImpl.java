@@ -1,9 +1,7 @@
 package cs544.ea.OnlineRetailSystem.service.Impl;
 
-import cs544.ea.OnlineRetailSystem.domain.Item;
-import cs544.ea.OnlineRetailSystem.domain.Order;
-import cs544.ea.OnlineRetailSystem.domain.Review;
-import cs544.ea.OnlineRetailSystem.domain.User;
+import cs544.ea.OnlineRetailSystem.domain.*;
+import cs544.ea.OnlineRetailSystem.helper.GetUser;
 import cs544.ea.OnlineRetailSystem.repository.ItemRepository;
 import cs544.ea.OnlineRetailSystem.repository.OrderRepository;
 import cs544.ea.OnlineRetailSystem.repository.UserRepository;
@@ -28,13 +26,16 @@ public class ItemServiceImpl implements ItemService {
     private final UserRepository userRepository;
 
     private final OrderRepository orderRepository;
+    private final GetUser user;
     @Autowired
-    public ItemServiceImpl(ItemRepository itemRepository, ReviewRepository reviewRepository, PublicService publicService, UserRepository userRepository, OrderRepository orderRepository) {
+    public ItemServiceImpl(ItemRepository itemRepository, ReviewRepository reviewRepository, PublicService publicService, UserRepository userRepository, OrderRepository orderRepository, GetUser user) {
         this.itemRepository = itemRepository;
         this.reviewRepository = reviewRepository;
         this.publicService = publicService;
         this.userRepository = userRepository;
-        this.orderRepository = orderRepository;
+       this.orderRepository = orderRepository;
+
+        this.user = user;
     }
 
 //    @Override
@@ -47,8 +48,20 @@ public class ItemServiceImpl implements ItemService {
         return itemRepository.findById(item).orElseThrow(()-> new IllegalArgumentException("Item not found"));
     }//this done in publicService
 
+
     @Override
     public Item addItem(Item item) {
+
+        User merchantId = user.getUser();
+
+        // Fetch the merchant from the database using the merchantId
+        User merchant = userRepository.findById(merchantId.getId())
+                .orElseThrow(() -> new IllegalArgumentException("Merchant not found"));
+
+        // Set the merchant for the item
+        item.setMerchant(merchant);
+
+        // Save the item
         return itemRepository.save(item);
     }
 
@@ -79,13 +92,32 @@ public class ItemServiceImpl implements ItemService {
     }
 
 
-
     @Override
     public Review addReview(Long itemId, Review review) {
-        Item item = getItemById(itemId);
-        review.setItem(item); // Set the item of the review
-        return reviewRepository.save(review); // Save and return the review
+
+        User customer = user.getUser();
+        List<Order> orders = orderRepository.getOrderByCustomerId(customer.getId());
+//we have list of item in orders I have to loop the itemId if it exist  in the order list //then check if the item is deliverd if so the customer can add a review
+
+        for (Order order : orders) {
+            List<LineItem> items = order.getLineItems();
+            for (LineItem item : items) {
+                if (item.getItem().getItemId().equals(itemId)) {
+                    if (order.isDelivered(order)) {
+                        // The item exists in the order and is delivered
+                        // Allow the customer to add a review
+
+                        return reviewRepository.save(review);
+                    } else {
+                        throw new IllegalStateException("Item is not delivered yet");
+                    }
+                }
+            }
+        }
+
+        throw new IllegalArgumentException("Item not found in customer's orders");
     }
+
 
     @Override
     public List<Review> getReviewByItemId(Long itemId) {
@@ -111,16 +143,18 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public Order getOrderById(Long id) {//to do by other
-
-        Order order = getOrderById(id);
-        return orderRepository.getReferenceById(order.getId());
-
+    public Order getOrderById(Long id) {
+        return orderRepository.getReferenceById(id);
     }
+
 
 
     @Override
     public List<Item> getAllItems() {
         return itemRepository.findAll();
+    }
+
+    public List<Item> searchItems(String keyword) {
+        return itemRepository.findByNameContainingIgnoreCase(keyword);
     }
 }
