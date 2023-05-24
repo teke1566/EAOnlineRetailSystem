@@ -1,5 +1,6 @@
 package cs544.ea.OnlineRetailSystem.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -28,6 +29,7 @@ public class Item {
     private Integer quantityInStock;
 
     @OneToMany(mappedBy = "item")
+    @JsonIgnore
     private List<Review> reviews;
 
     @ManyToOne //Many item can be owned by one merchant
