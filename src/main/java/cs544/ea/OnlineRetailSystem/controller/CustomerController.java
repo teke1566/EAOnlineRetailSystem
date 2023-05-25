@@ -2,7 +2,6 @@ package cs544.ea.OnlineRetailSystem.controller;
 
 import java.util.List;
 
-import cs544.ea.OnlineRetailSystem.service.PublicService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,14 +18,13 @@ import org.springframework.web.bind.annotation.RestController;
 import cs544.ea.OnlineRetailSystem.domain.Address;
 import cs544.ea.OnlineRetailSystem.domain.Cart;
 import cs544.ea.OnlineRetailSystem.domain.CreditCard;
-import cs544.ea.OnlineRetailSystem.domain.Order;
-import cs544.ea.OnlineRetailSystem.domain.OrderStatus;
 import cs544.ea.OnlineRetailSystem.domain.User;
 import cs544.ea.OnlineRetailSystem.domain.dto.request.ItemRequest;
 import cs544.ea.OnlineRetailSystem.domain.dto.response.OrderResponse;
 import cs544.ea.OnlineRetailSystem.service.CartService;
 import cs544.ea.OnlineRetailSystem.service.CustomerService;
 import cs544.ea.OnlineRetailSystem.service.OrderService;
+import cs544.ea.OnlineRetailSystem.service.PublicService;
 import cs544.ea.OnlineRetailSystem.util.CustomErrorType;
 import jakarta.persistence.EntityNotFoundException;
 
@@ -39,7 +37,7 @@ public class CustomerController {
     private final PublicService publicService;
     private final CartService cartService;
     
-//    @Autowired
+    @Autowired
     public CustomerController(CustomerService customerService, OrderService orderService
             , PublicService publicService, CartService cartService) {
         this.customerService = customerService;
@@ -84,9 +82,11 @@ public class CustomerController {
 //    }
 
     @PostMapping("/credit-cards")
-    public CreditCard addNewCreditCard(@RequestBody CreditCard creditCard){
-        return publicService.addCreditCard(creditCard);
+    public ResponseEntity<CreditCard> addNewCreditCard(@RequestBody CreditCard creditCard) {
+        CreditCard savedCreditCard = publicService.addCreditCard(creditCard);
+        return ResponseEntity.ok(savedCreditCard);
     }
+
     @PutMapping("/credit-cards/{creditCardId}")//working
     public CreditCard updateCreditCard(@PathVariable Long creditCardId, @RequestBody CreditCard creditCard){
         return customerService.updateCreditCard(creditCardId,creditCard);
@@ -103,8 +103,14 @@ public class CustomerController {
     }
 
     @PutMapping("/shippingAddress/{shippingAddressId}")
-    public Address updateShippingAddress(@PathVariable Long shippingAddressId, @RequestBody Address address) {
-        return customerService.updateShippingAddress(shippingAddressId, address);
+    public ResponseEntity<?> updateShippingAddress(@PathVariable Long shippingAddressId, @RequestBody Address address) {
+     //   return customerService.updateShippingAddress(shippingAddressId, address);
+        try {
+            Address updateShippingAddress = customerService.updateShippingAddress(shippingAddressId, address);
+            return new ResponseEntity<>(updateShippingAddress, HttpStatus.OK);
+        } catch (EntityNotFoundException e) {
+            return new ResponseEntity<>(new CustomErrorType(e.getMessage()), HttpStatus.NOT_FOUND);
+        }
     }
 
     @DeleteMapping("/shippingAddress/{shippingAddressId}")
@@ -125,9 +131,15 @@ public class CustomerController {
     }
 
     @PutMapping("/billingAddress/{billingAddressId}")
-    public Address updateBillingAddress(@PathVariable Long billingAddressId, @RequestBody Address address) {
-        return customerService.updateBillingAddress(billingAddressId, address);
+    public ResponseEntity<?> updateBillingAddress(@PathVariable Long billingAddressId, @RequestBody Address address) {
+        try {
+            Address updatedBillingAddress = customerService.updateBillingAddress(billingAddressId, address);
+            return new ResponseEntity<>(updatedBillingAddress, HttpStatus.OK);
+        } catch (EntityNotFoundException e) {
+            return new ResponseEntity<>(new CustomErrorType(e.getMessage()), HttpStatus.NOT_FOUND);
+        }
     }
+
 
     @DeleteMapping("/billingAddress/{billingAddressId}")
     public void deleteBillingAddress(@PathVariable Long billingAddressId) {
@@ -193,46 +205,38 @@ public class CustomerController {
     }
     
     
-    //Orders
+    /** ORDER APIs */
     
-    // GET /api/v1/customers/orders?orderStatus=PLACED
     // GET /api/v1/customers/orders
-    @GetMapping("/{customerId}/orders")
-    public List<OrderResponse> getCustomerAllOrders(@PathVariable Long customerId, @RequestParam OrderStatus orderStatus) {
-    	if (orderStatus != null)
-    		return orderService.getCustomerOrderByStatus(customerId, orderStatus);
-    	return orderService.getCustomerAllOrders(customerId);
+    // GET /api/v1/customers/orders?orderStatus=PLACED
+    // get all orders for the current customer; can use orderStatus as a filter
+    @GetMapping("/orders")
+    public List<OrderResponse> getCustomerAllOrders(@RequestParam String orderStatus) {
+    	if (!orderStatus.isEmpty())
+    		return orderService.getCustomerOrderByStatus(orderStatus);
+    	return orderService.getCustomerAllOrders();
     }
     
-    @GetMapping("/{customerId}/orders/{orderId}") //
-    public ResponseEntity<?> getCustomerOrderById(@PathVariable Long customerId, @PathVariable Long orderId) {
+    // GET /api/v1/customers/orders/:orderId
+    // get the current customer order by id 
+    @GetMapping("/orders/{orderId}")
+    public ResponseEntity<?> getCustomerOrderById(@PathVariable Long orderId) {
     	try {
-    		return new ResponseEntity<OrderResponse>(orderService.getCustomerOrderById(customerId, orderId), HttpStatus.OK);
+    		return new ResponseEntity<OrderResponse>(orderService.getCustomerOrderById(orderId), HttpStatus.OK);
     	} catch (EntityNotFoundException e) {
     		return new ResponseEntity<>(new CustomErrorType(e.getMessage()), HttpStatus.NOT_FOUND);
     	}
     }
-    	
-//	@PutMapping("/{customerId}/orders/{orderId}")
-//	public ResponseEntity<?> updateOrderById(@PathVariable Long customerId, @PathVariable Long orderId, @RequestBody Order order) {
-//		try {
-//			return new ResponseEntity<OrderResponse>(orderService.updateCustomerOrderById(customerId, orderId, order), HttpStatus.OK);
-//		} catch (EntityNotFoundException e) {
-//			return new ResponseEntity<>(new CustomErrorType("Order not found"), HttpStatus.NOT_FOUND);
-//		} catch (Exception e) {
-//			return new ResponseEntity<>(new CustomErrorType("Cannot delete order"), HttpStatus.BAD_REQUEST);
-//		}
-//	}
+    
+    // POST /api/v1/customers/orders/:orderId
+    // place a new order
+    @PostMapping("/orders/{orderId}")
+    public ResponseEntity<?> placeOrder(@PathVariable Long orderId) {
+    	try {
+    		return new ResponseEntity<OrderResponse>(orderService.placeOrder(orderId), HttpStatus.OK);
+    	} catch (Exception e) {
+    		return new ResponseEntity<>(new CustomErrorType(e.getMessage()), HttpStatus.NOT_FOUND);
+    	}
+    }
 	
-	@DeleteMapping("/{customerId}/orders/{orderId}")
-	public ResponseEntity<?> deleteOrderById(@PathVariable Long customerId, @PathVariable Long orderId) {
-		try {
-			orderService.deleteCustomerOrderById(customerId, orderId);
-			return new ResponseEntity<>(HttpStatus.OK);
-		} catch (EntityNotFoundException e) {
-			return new ResponseEntity<>(new CustomErrorType("Order not found"), HttpStatus.NOT_FOUND);
-		} catch (Exception e) {
-			return new ResponseEntity<>(new CustomErrorType("Cannot delete order"), HttpStatus.BAD_REQUEST);
-		}
-	}
 }

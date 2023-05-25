@@ -7,10 +7,7 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -18,6 +15,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@Transactional
 @Slf4j
 public class CustomerServiceImpl implements CustomerService {
     private final UserRepository customerRepository;
@@ -28,13 +26,14 @@ public class CustomerServiceImpl implements CustomerService {
 
     private final OrderRepository orderRepository;
     private final ReviewRepository reviewRepository;
+    private final AddressRepository addressRepository;
 
     public CustomerServiceImpl(UserRepository customerRepository,
                                CreditCardRepository creditCardRepository,
                                CartRepository cartRepository,
                                LineItemRepository lineItemRepository,
                                OrderRepository orderRepository,
-                               ReviewRepository reviewRepository) {
+                               ReviewRepository reviewRepository, AddressRepository addressRepository) {
         this.customerRepository=customerRepository;
         this.lineItemRepository=lineItemRepository;
         this.cartRepository=cartRepository;
@@ -42,6 +41,7 @@ public class CustomerServiceImpl implements CustomerService {
         this.orderRepository=orderRepository;
         this.reviewRepository=reviewRepository;
 
+        this.addressRepository = addressRepository;
     }
 
     @Override
@@ -159,51 +159,35 @@ public class CustomerServiceImpl implements CustomerService {
         return creditCardRepository.findAll();
     }
 
-//    @Override
-//    public Address addShippingAddress(Address address) { //this is done in PublicService
-//        User user = getUser(); // Retrieve the user from the current context, or fetch it from the repository
-//        address.setAddressType(AddressType.SHIPPING);
-//        user.getShippingAddresses().add(address);
-//        return customerRepository.save(user).getShippingAddresses()
-//                .stream()
-//                .filter(a -> a.equals(address))
-//                .findFirst()
-//                .orElse(null);
-//    }
 
 
-    @Override
-    public Address updateShippingAddress(Long shippingAddressId, Address address) {
-        Optional<User> optionalUser = customerRepository.findById(shippingAddressId);
-        if (optionalUser.isPresent()) {
-            User user = optionalUser.get();
-            List<Address> shippingAddresses = user.getShippingAddresses();
-            Address existingAddress = shippingAddresses.stream()
-                    .filter(a -> a.getId().equals(shippingAddressId))
-                    .findFirst()
-                    .orElse(null);
-            if (existingAddress != null) {
-                // Update the necessary fields of the address
-                existingAddress.setStreet(address.getStreet());
-                existingAddress.setCity(address.getCity());
-                existingAddress.setState(address.getState());
-                existingAddress.setZipCode(address.getZipCode());
-                existingAddress.setCountry(address.getCountry());
-                // Save the updated address
-                return customerRepository.save(user).getShippingAddresses()
-                        .stream()
-                        .filter(a -> a.equals(existingAddress))
-                        .findFirst()
-                        .orElse(null);
-            }
+@Override
+    public Address updateShippingAddress(Long shippingAddressId, Address updatedAddress) {
+        Address shippingAddress = addressRepository.findByIdAndAddressType(shippingAddressId, AddressType.SHIPPING);
+
+        if (shippingAddress == null) {
+            throw new EntityNotFoundException("Shipping address not found");
         }
-        return null;
+
+        // Update the fields of the existing shipping address
+        shippingAddress.setStreet(updatedAddress.getStreet());
+        shippingAddress.setCity(updatedAddress.getCity());
+        shippingAddress.setState(updatedAddress.getState());
+        shippingAddress.setZipCode(updatedAddress.getZipCode());
+        shippingAddress.setCountry(updatedAddress.getCountry());
+
+        return addressRepository.save(shippingAddress);
     }
+
 
 
     @Override
     public void deleteShippingAddressById(Long shippingAddressId) {
-        customerRepository.deleteById(shippingAddressId);
+        addressRepository.deleteByIdAndAddressType(shippingAddressId, AddressType.SHIPPING);
+    }
+    @Override
+    public void deleteBillingAddressById(Long billingAddressId) {
+        addressRepository.deleteByIdAndAddressType(billingAddressId, AddressType.BILLING);
     }
 
     @Override
@@ -221,49 +205,8 @@ public class CustomerServiceImpl implements CustomerService {
         return billingAddresses;
     }
 
-//    @Override
-//    public Address addBillingAddress(Address address) {
-//        User user = getUser(); // Retrieve the user from the current context, or fetch it from the repository
-//        address.setAddressType(AddressType.BILLING);
-//        user.setBillingAddress(address);
-//        return customerRepository.save(user).getBillingAddress();
-//    }
-//    private User getUser() {
-//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//
-//        if (authentication != null && authentication.isAuthenticated()) {
-//            String username = authentication.getName();
-//            return customerRepository.findByname(username);
-//        }
-//
-//        return null;
-//    }
 
 
-    @Override
-    public void deleteBillingAddressById(Long billingAddressId) {
-        customerRepository.deleteById(billingAddressId);
-    }
-
-    @Override
-    public Address updateBillingAddress(Long billingAddressId, Address address) {
-        Optional<User> optionalUser = customerRepository.findById(billingAddressId);
-        if (optionalUser.isPresent()) {
-            User user = optionalUser.get();
-            Address existingAddress = user.getBillingAddress();
-            if (existingAddress != null) {
-                // Update the necessary fields of the address
-                existingAddress.setStreet(address.getStreet());
-                existingAddress.setCity(address.getCity());
-                existingAddress.setState(address.getState());
-                existingAddress.setZipCode(address.getZipCode());
-                existingAddress.setCountry(address.getCountry());
-                // Save the updated address
-                return customerRepository.save(user).getBillingAddress();
-            }
-        }
-        return null;
-    }
 
     @Override
     public List<Address> getAllShippingAddress() {
@@ -276,5 +219,21 @@ public class CustomerServiceImpl implements CustomerService {
         }
 
         return shippingAddresses;
+    }
+    public  Address updateBillingAddress(Long billingAddressId, Address updatedAddress) {
+        Address billingAddress = addressRepository.findByIdAndAddressType(billingAddressId, AddressType.BILLING);
+
+        if (billingAddress == null) {
+            throw new EntityNotFoundException("Billing address not found");
+        }
+
+        // Update the fields of the existing billing address
+        billingAddress.setStreet(updatedAddress.getStreet());
+        billingAddress.setCity(updatedAddress.getCity());
+        billingAddress.setState(updatedAddress.getState());
+        billingAddress.setZipCode(updatedAddress.getZipCode());
+        billingAddress.setCountry(updatedAddress.getCountry());
+
+        return addressRepository.save(billingAddress);
     }
 }

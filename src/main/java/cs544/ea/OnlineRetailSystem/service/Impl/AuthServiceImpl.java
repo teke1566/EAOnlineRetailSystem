@@ -79,6 +79,8 @@ public class AuthServiceImpl implements AuthService {
 
         try {
             User user = modelMapper.map(registerRequest, User.class);
+            user.setFirstName(registerRequest.getFirstname());
+            user.setLastName(registerRequest.getLastname());
             user.setName(Optional.ofNullable(registerRequest.getName()).orElse("Default Name"));
             Roles roleValue = registerRequest.getIsOwner() ? Roles.MERCHANT : Roles.CUSTOMER;
             Role role = roleRepo.findByRole(roleValue);

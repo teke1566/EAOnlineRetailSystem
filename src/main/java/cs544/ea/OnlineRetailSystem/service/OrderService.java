@@ -8,18 +8,14 @@ import cs544.ea.OnlineRetailSystem.domain.dto.response.OrderResponse;
 public interface OrderService {
 	List<OrderResponse> getAllOrders(OrderStatus orderStatus);
 
-	//public List<OrderResponse> getAllOrders();
 	public List<OrderResponse> getOrdersByStatus(OrderStatus orderStatus);
-	public OrderResponse getOrderById(Long orderId);
-	
-	public List<OrderResponse> getCustomerAllOrders(Long userId);
-	public List<OrderResponse> getCustomerOrderByStatus(Long userId, OrderStatus orderStatus);
-	public OrderResponse getCustomerOrderById(Long userId, Long orderId);
-	
-//	public OrderResponse addCustomerOrder(Long userId, Order order);
-//	public OrderResponse updateCustomerOrderById(Long userId, Long orderId, Order order) throws Exception; //include update status
-	public void deleteCustomerOrderById(Long userId, Long orderId) throws Exception;
 
+	public OrderResponse getOrderById(Long orderId);
+	public void deleteOrderById(Long orderId);
 	public OrderResponse updateOrderStatus(Long orderId, OrderStatus orderStatus);
-	public OrderResponse placeOrder(Long customerId, Long orderId) throws Exception;
+
+	public List<OrderResponse> getCustomerAllOrders();
+	public List<OrderResponse> getCustomerOrderByStatus(String orderStatus);
+	public OrderResponse getCustomerOrderById(Long orderId);
+	public OrderResponse placeOrder(Long orderId) throws Exception; //order from NEW -> PLACED
 }
