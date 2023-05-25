@@ -22,6 +22,8 @@ public interface ItemService  {
 
     List<Review> getReviewByItemId(Long itemId);// this is added because we need it for the itemController since we don't have a ReviewController
 
+    List<Review> getAllReviewByCustomerId();
+
     List<Item> getAllItemByMerchantId(Long userId);//not to do that
 
     List<Order> getAllOrder(Long userId);//to do

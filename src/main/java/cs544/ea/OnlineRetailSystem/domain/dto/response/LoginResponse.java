@@ -13,7 +13,4 @@ public class LoginResponse {
     private String accessToken;
     private List<String> roles;
     private long userId;
-
-
-
 }

@@ -1,9 +1,12 @@
 package cs544.ea.OnlineRetailSystem.repository;
 
+import cs544.ea.OnlineRetailSystem.domain.CreditCard;
 import cs544.ea.OnlineRetailSystem.domain.Role;
 import cs544.ea.OnlineRetailSystem.domain.Roles;
 import cs544.ea.OnlineRetailSystem.domain.User;
+import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -25,4 +28,10 @@ public interface UserRepository extends JpaRepository<User,Long> {
     User findUserByEmailAddress(String email);
 
     boolean existsByEmail(String email);
+
+
+    @Query("select c from User u join u.creditCards c where u.id=:customerId")
+    List<CreditCard> findCreditCardByCustomerId(@Param("customerId") Long customerId);
+
+
 }

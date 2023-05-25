@@ -1,6 +1,7 @@
 package cs544.ea.OnlineRetailSystem.service.Impl;
 
 import cs544.ea.OnlineRetailSystem.domain.*;
+import cs544.ea.OnlineRetailSystem.helper.GetUser;
 import cs544.ea.OnlineRetailSystem.repository.*;
 import cs544.ea.OnlineRetailSystem.service.CustomerService;
 import jakarta.persistence.EntityNotFoundException;
@@ -28,12 +29,16 @@ public class CustomerServiceImpl implements CustomerService {
     private final ReviewRepository reviewRepository;
     private final AddressRepository addressRepository;
 
+    private final GetUser getUser;
+
     public CustomerServiceImpl(UserRepository customerRepository,
                                CreditCardRepository creditCardRepository,
                                CartRepository cartRepository,
                                LineItemRepository lineItemRepository,
                                OrderRepository orderRepository,
-                               ReviewRepository reviewRepository, AddressRepository addressRepository) {
+                               ReviewRepository reviewRepository,
+                               AddressRepository addressRepository,
+                               GetUser getUser) {
         this.customerRepository=customerRepository;
         this.lineItemRepository=lineItemRepository;
         this.cartRepository=cartRepository;
@@ -42,6 +47,7 @@ public class CustomerServiceImpl implements CustomerService {
         this.reviewRepository=reviewRepository;
 
         this.addressRepository = addressRepository;
+        this.getUser=getUser;
     }
 
     @Override
@@ -133,26 +139,16 @@ public class CustomerServiceImpl implements CustomerService {
 //    public CreditCard addCreditCard(CreditCard creditCard) {
 //        return creditCardRepository.save(creditCard);
 //    }
-    public CreditCard getCreditCardById(Long creditCardId){
-        Optional<CreditCard> creditCard= creditCardRepository.findById(creditCardId);
-        return creditCard.orElse(null);
-    }
+public CreditCard getCreditCardById(Long creditCardId) {
+    List<CreditCard> creditCards = customerRepository.findCreditCardByCustomerId(getUser.getUser().getId());
+
+    return creditCards.stream()
+            .filter(creditCard -> creditCard.getId().equals(creditCardId))
+            .findFirst()
+            .orElseThrow(() -> new EntityNotFoundException("Credit card with ID: " + creditCardId + " not found."));
+}
 
 
-    @Override
-    public void deleteCreditCardById(Long creditCardId) {
-        creditCardRepository.deleteById(creditCardId);
-    }
-
-    @Override
-    public CreditCard updateCreditCard(Long creditCardId, CreditCard creditCard) {
-        CreditCard existingCreditCard = getCreditCardById(creditCardId);
-        if (existingCreditCard != null) {
-            BeanUtils.copyProperties(creditCard, existingCreditCard,"id");//copy file from new to existing object
-            return creditCardRepository.save(existingCreditCard);
-        }
-        return null;
-    }
 
     @Override
     public List<CreditCard> getAllCreditCards() {
