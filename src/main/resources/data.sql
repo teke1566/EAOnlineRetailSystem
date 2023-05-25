@@ -1,8 +1,10 @@
-INSERT INTO users (id, email, name, password)
+
+
+INSERT INTO users (id, email, name, password)--Admin
 VALUES (100, 'admin@gmail.com', 'Admin', '$2a$12$IKEQb00u5QpZMx4v5zMweu.3wrq0pS7XLCHO4yHZ.BW/yvWu1feo2'); --123
-INSERT INTO users (id, email, name, password)
+INSERT INTO users (id, email, name, password)--Merchant
 VALUES (200, 'source@gmail.com', 'abe', '$2a$12$IKEQb00u5QpZMx4v5zMweu.3wrq0pS7XLCHO4yHZ.BW/yvWu1feo2'); --123
-INSERT INTO users (id, email, name, password)
+INSERT INTO users (id, email, name, password)--Customer
 VALUES (300, 'foo@gmail.com', 'Mtek', '$2a$12$IKEQb00u5QpZMx4v5zMweu.3wrq0pS7XLCHO4yHZ.BW/yvWu1feo2');
 --123
 
@@ -59,11 +61,11 @@ VALUES (1, 'SHIPPING', '123 Main St', 'New York', 'NY', '10001', 'USA'),
 
 -- Insert data into 'users' table
 INSERT INTO users (id, name, email, firstName, lastName, password, billingAddress, defaultShippingAddress)
-VALUES (20, 'johndoe2', 'john.doe2@example.com', 'John', 'Doe', 'johndoe123', 2, 1),
-       (21, 'janedoe2', 'jane.doe2@example.com', 'Jane', 'Doe', 'janedoe123', 4, 3),
-       (22, 'youkim', 'youkim@example.com', 'CUSTOMER', 'User', 'admin123', 4, 5),
-       (23, 'merchant2', 'teke@example.com', 'MERCHANT', 'User', 'merchant123', 2, 6),
-       (24, 'customer2', 'Naod@example.com', 'Customer', 'User', 'customer123', 2, 7);
+VALUES (20, 'johndoe1', 'john.doe1@example.com', 'John', 'user', '$2a$12$fsVCzqViI4OuoCxsjH18lu4hqVr4Gqlxz7ouPXPTwplpAXiMcgSF2', 2, 1),--(pass: customer1)Customer
+       (21, 'Naod', 'Naod@example.com', 'Naod', 'user', '$2a$12$XO3Syo0RXIbr7DtMSWdeMO1ZwKSHW75OVcciyHyhlEtSyPjrurXuS', 4, 3),--(pass:customer2),--Customer
+       (22, 'youkim', 'youkim@example.com', 'You Kim', 'user', '$2a$12$jcOg9LYYXclbjE0E4r/Q1eEHTiYBjtRz7xWlIHfeHVnhcqsASRnBq', 4, 5),--(customer3),--Customer
+       (23, 'teke', 'teke@example.com', 'Teke', 'user', '$2a$12$sdIOa1lb/HZuIiynb3hZS.p4GU9EjM0aYw/B5sJzTs5x6VfpL8zru', 2, 6),--(customer4),--Customer
+       (24, 'Ayal', 'ayal@example.com', 'Ayal', 'User', '$2a$12$Wr9A3IqHNpuigFCshmNYp.aeB2Fgml8/YrWulZOWYWKvOAYHsN836', 2, 7);--(customer5);--Customer
 
 
 
@@ -77,7 +79,7 @@ VALUES (100, 1); --100 is admin
 INSERT INTO users_role (user_id, role_id)
 VALUES (200, 2); --200 is Merchant
 INSERT INTO users_role (user_id, role_id)
-VALUES (300, 3);
+VALUES (300, 3);--300 is Customer
 INSERT INTO users_role (user_id, role_id)
 VALUES (20, 3);
 INSERT INTO users_role (user_id, role_id)

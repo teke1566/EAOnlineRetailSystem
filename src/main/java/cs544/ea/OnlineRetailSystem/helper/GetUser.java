@@ -17,7 +17,6 @@ public class GetUser {// a utility function that retrieves the currently authent
 
         if (authentication != null && authentication.isAuthenticated()) {
             String username = authentication.getName();
-            System.out.println("username wil be: "+authentication.getDetails());
             return customerRepository.findUserByEmailAddress(username);
         }
 
