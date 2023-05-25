@@ -28,6 +28,7 @@ public class CustomerServiceImpl implements CustomerService {
     private final OrderRepository orderRepository;
     private final ReviewRepository reviewRepository;
     private final AddressRepository addressRepository;
+    private final UserRepository userRepository;
 
     private final GetUser getUser;
 
@@ -38,7 +39,7 @@ public class CustomerServiceImpl implements CustomerService {
                                OrderRepository orderRepository,
                                ReviewRepository reviewRepository,
                                AddressRepository addressRepository,
-                               GetUser getUser) {
+                               UserRepository userRepository, GetUser getUser) {
         this.customerRepository=customerRepository;
         this.lineItemRepository=lineItemRepository;
         this.cartRepository=cartRepository;
@@ -47,6 +48,7 @@ public class CustomerServiceImpl implements CustomerService {
         this.reviewRepository=reviewRepository;
 
         this.addressRepository = addressRepository;
+        this.userRepository = userRepository;
         this.getUser=getUser;
     }
 
@@ -179,12 +181,30 @@ public CreditCard getCreditCardById(Long creditCardId) {
 
     @Override
     public void deleteShippingAddressById(Long shippingAddressId) {
-        addressRepository.deleteByIdAndAddressType(shippingAddressId, AddressType.SHIPPING);
+        Address shippingAddress = addressRepository.findByIdAndAddressType(shippingAddressId, AddressType.SHIPPING);
+        if (shippingAddress != null) {
+            User user = userRepository.findByShippingAddresses(shippingAddress);
+            if (user != null) {
+                user.getShippingAddresses().remove(shippingAddress);
+                userRepository.save(user);
+            }
+            addressRepository.delete(shippingAddress);
+        }
     }
+
     @Override
     public void deleteBillingAddressById(Long billingAddressId) {
-        addressRepository.deleteByIdAndAddressType(billingAddressId, AddressType.BILLING);
+        Address billingAddress = addressRepository.findById(billingAddressId).orElse(null);
+        if (billingAddress != null) {
+            List<User> usersWithBillingAddress = userRepository.findByBillingAddress(billingAddress);
+            for (User user : usersWithBillingAddress) {
+                user.setBillingAddress(null);
+                userRepository.save(user);
+            }
+            addressRepository.delete(billingAddress);
+        }
     }
+
 
     @Override
     public List<Address> getAllBillingAddress() {
