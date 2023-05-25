@@ -41,15 +41,27 @@ public class OrderServiceImpl implements OrderService {
 				.map(order -> mapper.map(order, OrderResponse.class))
 				.toList();
 	}
-	
+
 	@Override
-	public List<OrderResponse> getAllOrders() {
+	public List<OrderResponse> getAllOrders(OrderStatus orderStatus) {
+		if (orderStatus != null) {
+			return mapOrderToOrderResponse(orderRepository.findOrdersByStatus(orderStatus));
+		}
 		return mapOrderToOrderResponse(orderRepository.findAll());
 	}
 
+
 	@Override
 	public OrderResponse getOrderById(Long orderId) {
-		return mapper.map(orderRepository.findById(orderId), OrderResponse.class);
+		Order order = orderRepository.findById(orderId)
+				.orElseThrow(() -> new EntityNotFoundException("Order not found"));
+		return mapper.map(order, OrderResponse.class);
+	}
+	@Override
+	public OrderResponse updateOrderStatus(Long orderId, OrderStatus orderStatus) {
+		Order order = orderRepository.findById(orderId).orElseThrow(() -> new EntityNotFoundException("Order not found"));
+		order.setStatus(orderStatus);
+		return mapper.map(orderRepository.save(order), OrderResponse.class);
 	}
 
 	@Override
@@ -106,12 +118,12 @@ public class OrderServiceImpl implements OrderService {
 		else throw new Exception("Order cannot be deleted");
 	}
 
-	@Override
-	public OrderResponse updateOrderStatus(Long orderId, OrderStatus orderStatus) {
-		Order order = orderRepository.findById(orderId).orElseThrow(() -> new EntityNotFoundException("Order not found"));
-		order.setStatus(orderStatus);
-		return mapper.map(orderRepository.save(order), OrderResponse.class);
-	}
+//	@Override
+//	public OrderResponse updateOrderStatus(Long orderId, OrderStatus orderStatus) {
+//		Order order = orderRepository.findById(orderId).orElseThrow(() -> new EntityNotFoundException("Order not found"));
+//		order.setStatus(orderStatus);
+//		return mapper.map(orderRepository.save(order), OrderResponse.class);
+//	}
 
 	@Override
 	public OrderResponse placeOrder(Long customerId, Long orderId) throws Exception {// why would we need to ask orderId if we want to place a new order?

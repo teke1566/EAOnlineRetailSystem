@@ -58,10 +58,11 @@ public class SecurityConfig {
                 .requestMatchers("/api/v1/items/**").hasAnyAuthority(Roles.MERCHANT.name())
                 .requestMatchers("/api/v1/admin/**").hasAnyAuthority(Roles.ADMIN.name())
 
+                .requestMatchers(HttpMethod.GET,"/api/v1/admin/**").hasAnyAuthority(Roles.ADMIN.name())
 
                 .requestMatchers(HttpMethod.GET,"/api/v1/admin/*").hasAnyAuthority(Roles.ADMIN.name())
                 .requestMatchers(HttpMethod.DELETE,"/api/v1/admin/**").hasAnyAuthority(Roles.ADMIN.name())
-                .requestMatchers(HttpMethod.PUT,"/api/v1/admin/**").hasAnyAuthority(Roles.ADMIN.name())
+                .requestMatchers(HttpMethod.PUT,"/api/v1/admin/orders/*/status").hasAnyAuthority(Roles.ADMIN.name())
 
 
                 .anyRequest()

@@ -71,6 +71,12 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public void register(RegisterRequest registerRequest) {
+        String email = registerRequest.getEmail();
+
+        if (userRepo.existsByEmail(email)) {
+            throw new IllegalArgumentException("User with the provided email already exists.");
+        }
+
         try {
             User user = modelMapper.map(registerRequest, User.class);
             user.setName(Optional.ofNullable(registerRequest.getName()).orElse("Default Name"));
@@ -85,7 +91,6 @@ public class AuthServiceImpl implements AuthService {
         }
     }
 
-
-
 }
+
 

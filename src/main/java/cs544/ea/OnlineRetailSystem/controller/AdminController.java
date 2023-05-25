@@ -16,16 +16,22 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Map;
 
 
 @RestController
 @RequestMapping("/api/v1/admin")
 public class AdminController {
 
-    @Autowired
+
     private AdminService adminService;
-    @Autowired
+
     private OrderService orderService;
+    @Autowired
+    public AdminController(AdminService adminService, OrderService orderService) {
+        this.adminService = adminService;
+        this.orderService = orderService;
+    }
 
     @GetMapping("/users")
     @ResponseStatus(HttpStatus.OK)
@@ -72,24 +78,30 @@ public class AdminController {
     }
 
 
-    @GetMapping
-    public List<OrderResponse> getAllOrders(@RequestParam OrderStatus orderStatus) {
-        if (orderStatus != null)
-            return orderService.getOrdersByStatus(orderStatus);
-        return orderService.getAllOrders();
+    @GetMapping("/orders")
+    public List<OrderResponse> getAllOrders(@RequestParam(required = false) OrderStatus orderStatus) {
+        return orderService.getAllOrders(orderStatus);
     }
 
-    @GetMapping("/{orderId}")
-    public OrderResponse getOrderById(@PathVariable Long orderId) {
-        return orderService.getOrderById(orderId);
+
+    @GetMapping("/orders/{orderId}")
+    public ResponseEntity<OrderResponse> getOrderById(@PathVariable("orderId") Long orderId) {
+        OrderResponse order = orderService.getOrderById(orderId);
+
+        if (order != null) {
+            return new ResponseEntity<>(order, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 
-    @PutMapping("/{orderId}/status")
-    public ResponseEntity<OrderResponse> updateOrderStatus(
-            @PathVariable("orderId") Long orderId,
-            @RequestParam("status") OrderStatus status
-    ) {
-        OrderResponse updatedOrder = adminService.changeOrderStatus(orderId, status);
-        return new ResponseEntity<>(updatedOrder, HttpStatus.OK);
+
+    @PutMapping("orders/{orderId}/status")
+    public ResponseEntity<OrderResponse> updateOrderStatus(@PathVariable Long orderId, @RequestBody Map<String, String> statusMap) {
+        String status = statusMap.get("status");
+        OrderStatus orderStatus = OrderStatus.valueOf(status);
+        OrderResponse updatedOrder = orderService.updateOrderStatus(orderId, orderStatus);
+        return ResponseEntity.ok(updatedOrder);
     }
+
 }

@@ -6,8 +6,9 @@ import cs544.ea.OnlineRetailSystem.domain.OrderStatus;
 import cs544.ea.OnlineRetailSystem.domain.dto.response.OrderResponse;
 
 public interface OrderService {
-	
-	public List<OrderResponse> getAllOrders();
+	List<OrderResponse> getAllOrders(OrderStatus orderStatus);
+
+	//public List<OrderResponse> getAllOrders();
 	public List<OrderResponse> getOrdersByStatus(OrderStatus orderStatus);
 	public OrderResponse getOrderById(Long orderId);
 	
