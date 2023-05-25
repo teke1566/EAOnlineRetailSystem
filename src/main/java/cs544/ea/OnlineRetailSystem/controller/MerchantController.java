@@ -6,6 +6,7 @@ import cs544.ea.OnlineRetailSystem.service.CustomerService;
 import cs544.ea.OnlineRetailSystem.service.ItemService;
 import cs544.ea.OnlineRetailSystem.service.PublicService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -66,7 +67,7 @@ public class MerchantController {
     }
 
 
-    @PostMapping("/{itemId}/reviews") // handle POST requests at /items/{itemId}/reviews
+    @PostMapping("/{itemId}") // handle POST requests at /items/{itemId}/reviews
     public Review addReview(@PathVariable Long itemId, @RequestBody Review review) {
         return itemService.addReview(itemId, review);
     }
@@ -74,6 +75,16 @@ public class MerchantController {
     @GetMapping("/{itemId}/reviews") // handle GET requests at /items/{itemId}/reviews
     public List<Review> getReviewByItemId(@PathVariable Long itemId) {
         return itemService.getReviewByItemId(itemId);
+    }
+
+    @GetMapping("/{userId}/items")
+    public ResponseEntity<List<Item>> getAllItemsByMerchantId(@PathVariable("userId") Long userId) {
+        try {
+            List<Item> items = itemService.getAllItemByMerchantId(userId);
+            return ResponseEntity.ok(items);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(null);
+        }
     }
 
 }

@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ItemServiceImpl implements ItemService {
@@ -82,37 +83,23 @@ public class ItemServiceImpl implements ItemService {
                 }).orElseThrow(()-> new IllegalArgumentException("Item not found"));
     }
 
-//    @Override
-//    public void deleteItem(Long itemId) {
-//
-//        // Check if the item still exists before deletion
-//        boolean itemExists = itemRepository.existsById(itemId);
-//
-//        if (!itemExists) {
-//            throw new IllegalArgumentException("Item not found with ID: " + itemId);
-//        }
-//
-//        // Check if the item is referenced in any carts
-//        List<Cart> cartsWithItem = cartRepository.findByItemId(itemId);
-//        if (!cartsWithItem.isEmpty()) {
-//            for (Cart cart : cartsWithItem) {
-//                List<LineItem> lineItems = cart.getLineItems();
-//                lineItems.removeIf(lineItem -> lineItem.getItem().getItemId().equals(itemId));
-//                cart.setLineItems(lineItems);
-//            }
-//            cartRepository.saveAll(cartsWithItem);
-//        }
-//
-//        // Delete the item
-//        itemRepository.deleteById(itemId);
-//    }
-
     @Override
-    @Transactional // the method should be executed with in the transaction
+    @Transactional // the method should be executed within the transaction
     public void deleteItem(Long itemId) {
+        // Get the currently logged-in merchant or user
+        User currentMerchant = user.getUser();
+
         // Check if the item exists
-        if (!itemRepository.existsById(itemId)) {
+        Optional<Item> optionalItem = itemRepository.findById(itemId);
+        if (optionalItem.isEmpty()) {
             throw new IllegalArgumentException("Item not found with ID: " + itemId);
+        }
+
+        Item item = optionalItem.get();
+
+        // Check if the item belongs to the current merchant
+        if (!item.getMerchant().equals(currentMerchant)) {
+            throw new IllegalArgumentException("You don't have permission to delete this item.");
         }
 
         // Delete the line items associated with the item
@@ -148,7 +135,7 @@ public class ItemServiceImpl implements ItemService {
 
         User customer = user.getUser();
         List<Order> orders = orderRepository.getOrderByCustomerId(customer.getId());
-//we have list of item in orders I have to loop the itemId if it exist  in the order list //then check if the item is deliverd if so the customer can add a review
+//we have list of item in orders I have to loop the itemId if it exists  in the order list //then check if the item is deliverd if so the customer can add a review
 
         for (Order order : orders) {
             List<LineItem> items = order.getLineItems();
@@ -176,24 +163,24 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<Review> getAllReviewByCustomerId() {
-        Long customerId= user.getUser().getId();
-        return reviewRepository.findByUserId(customerId);
-    }
+    public List<Item> getAllItemByMerchantId(Long userId) {
 
+        User merchant = user.getUser();
+        // Get the merchant by user ID
+        User user1 = userRepository.findById(userId).orElse(null);
 
-    @Override
-
-    public List<Item> getAllItemByMerchantId(Long userId) { //i need to check first the item is belong to the merchant and get the item
-
-        User merchant = userRepository.findById(userId).get();
-
-        if(merchant == null){
+        if (user1 == null) {
             return Collections.emptyList();
         }
 
-        return itemRepository.findItemsByMerchantId(merchant.getId());
-    }//this need to check the implimentation
+        // Check if the user is a merchant
+        if (!user1.getRole().contains(merchant)){
+            throw new IllegalArgumentException("Invalid user type. Expected Merchant.");
+        }
+
+        // Retrieve the items belonging to the merchant
+        return itemRepository.findItemsByMerchantId(userId);
+    }
 
     @Override
     public List<Order> getAllOrder(Long userId) {//to do by other
@@ -205,7 +192,11 @@ public class ItemServiceImpl implements ItemService {
         return orderRepository.getReferenceById(id);
     }
 
-
+    @Override
+    public List<Review> getAllReviewByCustomerId() {
+        Long customerId= user.getUser().getId();
+        return reviewRepository.findByUserId(customerId);
+    }
 
     @Override
     public List<Item> getAllItems() {
