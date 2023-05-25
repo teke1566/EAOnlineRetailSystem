@@ -12,4 +12,9 @@ public interface LineItemRepository extends JpaRepository<LineItem,Long> {
     @Query("delete from LineItem l where l.cart.id=:cartId")
     void deleteLineItemsByCartId(Long cartId);
 
+    @Modifying
+    @Query("DELETE FROM LineItem l WHERE l.item.itemId = :itemId")//This deletes the associated line items in the LineItem entity table that have a matching itemId.
+    void deleteByItemId(Long itemId);
+
+
 }

@@ -20,7 +20,7 @@ public class LineItem {
 	private Long lineItemId;
 
 	@ManyToOne (cascade = CascadeType.ALL)//one item can be sold many times
-	@JoinColumn(name = "itemid")
+	@JoinColumn(name = "itemid", referencedColumnName = "itemid", nullable = false)
 	private Item item;
 
 	@Column(name = "quantity")
