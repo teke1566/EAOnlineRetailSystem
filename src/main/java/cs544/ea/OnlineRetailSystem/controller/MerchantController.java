@@ -15,20 +15,25 @@ import java.util.List;
 public class MerchantController {
 
     private final ItemService itemService;
+
     private final CustomerService customerService;
 
     private final  PublicService publicService;
 
 
 
+
     @Autowired
     public MerchantController(ItemService itemService,
+
                               CustomerService customerService, PublicService publicService) {
         this.itemService = itemService;
         this.customerService = customerService;
 
         this.publicService = publicService;
+
     }
+        
 
     @GetMapping
     public List<Item> getAllItems(){
