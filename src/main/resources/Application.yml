@@ -2,9 +2,11 @@ spring:
   application:
     name: postgres
   datasource:
-    username: naodmengis
-    password: admin
+    username: postgres
+
+    password: 12345
     url: jdbc:postgresql://localhost:5432/mydb
+
 
   jpa:
     hibernate:
