@@ -13,8 +13,7 @@ public interface OrderService {
 	public void deleteOrderById(Long orderId);
 	public OrderResponse updateOrderStatus(Long orderId, OrderStatus orderStatus);
 	
-	public List<OrderResponse> getCustomerAllOrders();
-	public List<OrderResponse> getCustomerOrderByStatus(String orderStatus);
+	public List<OrderResponse> getCustomerAllOrders(String orderStatus);
 	public OrderResponse getCustomerOrderById(Long orderId);
 	public OrderResponse placeOrder(Long orderId) throws Exception; //order from NEW -> PLACED
 }

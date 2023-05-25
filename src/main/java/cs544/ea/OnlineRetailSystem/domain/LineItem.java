@@ -1,7 +1,14 @@
 package cs544.ea.OnlineRetailSystem.domain;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import jakarta.persistence.*;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -19,7 +26,7 @@ public class LineItem {
 	@Column(name = "lineitemid")
 	private Long lineItemId;
 
-	@ManyToOne (cascade = CascadeType.ALL)//one item can be sold many times
+	@ManyToOne (cascade = CascadeType.ALL) //one item can be sold many times
 	@JoinColumn(name = "itemid", referencedColumnName = "itemid", nullable = false)
 	private Item item;
 
@@ -28,25 +35,11 @@ public class LineItem {
 	
 	@Column(name = "discount")
 	private double discount;
-
-	//newly added Bidirectional relation with cart
-
-	@ManyToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "cart_id")
-	@JsonBackReference
-	private Cart cart;
 	
-	public LineItem(Item item, int quantity, double discount, Cart cart) {
-		this.setCart(cart);
+	public LineItem(Item item, int quantity, double discount) {
 		this.setItem(item);
 		this.setQuantity(quantity);
 		this.setDiscount(discount);
 	}
-	
-	public LineItem(Item item, double discount, Cart cart) {
-		this.setCart(cart);
-		this.setQuantity(0);
-		this.setItem(item);
-		this.setDiscount(discount);
-	}
+
 }

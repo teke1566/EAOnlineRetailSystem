@@ -79,7 +79,7 @@ public class CustomerServiceImpl implements CustomerService {
                     customerRepository.deleteById(customerId);
                 } else {
                     cartRepository.deleteCartByCustomerId(customerId);
-                    lineItemRepository.deleteLineItemsByCartId(carts.getId());
+//                    lineItemRepository.deleteLineItemsByCartId(carts.getId()); //when cart is deleted, all lineItems also deleted (via cascade)
                     orderRepository.deleteOrderByCustomerId(customerId);
                     reviewRepository.deleteByUserId(customerId);
                     customerRepository.deleteById(customerId);

@@ -45,7 +45,6 @@ public class Order {
 	private LocalDateTime orderDate;
 
 	@OneToMany(cascade = CascadeType.ALL)
-	@JoinColumn(name = "orderid")
 	private List<LineItem> lineItems;
   
 	public Order(User customer) {

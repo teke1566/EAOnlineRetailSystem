@@ -47,26 +47,29 @@ public class OrderServiceImpl implements OrderService {
 				.toList();
 	}
 	
-	private OrderStatus getOrderStatus(String orderStatus) {
-		OrderStatus status = OrderStatus.NEW;
-		switch(orderStatus) {
+	private OrderStatus getOrderStatus(String status) {
+		OrderStatus orderStatus = null;
+		switch(status) {
+		case "NEW":
+			orderStatus = OrderStatus.NEW;
+			break;
 		case "PLACED":
-			status = OrderStatus.PLACED;
+			orderStatus = OrderStatus.PLACED;
 			break;
 		case "PROCESSED":
-			status = OrderStatus.PROCESSED;
+			orderStatus = OrderStatus.PROCESSED;
 			break;
 		case "DELIVERED":
-			status = OrderStatus.DELIVERED;
+			orderStatus = OrderStatus.DELIVERED;
 			break;
 		case "RETURNED":
-			status = OrderStatus.RETURNED;
+			orderStatus = OrderStatus.RETURNED;
 			break;
 		case "SHIPPED":
-			status = OrderStatus.SHIPPED;
+			orderStatus = OrderStatus.SHIPPED;
 			break;
 		}
-		return status;
+		return orderStatus;
 	}
 	
 	@Override
@@ -97,15 +100,12 @@ public class OrderServiceImpl implements OrderService {
 	}
 	
 	@Override
-	public List<OrderResponse> getCustomerAllOrders() {
+	public List<OrderResponse> getCustomerAllOrders(String status) {
 		User customer = getUser.getUser();
-		return mapOrderToOrderResponse(orderRepository.findOrdersByUserId(customer.getId()));
-	}
-
-	@Override
-	public List<OrderResponse> getCustomerOrderByStatus(String orderStatus) { 
-		User customer = getUser.getUser();
-		return mapOrderToOrderResponse(orderRepository.findOrdersByUserIdAndStatus(customer.getId(), getOrderStatus(orderStatus)));
+		OrderStatus orderStatus = getOrderStatus(status);
+		if (orderStatus == null)
+			return mapOrderToOrderResponse(orderRepository.findOrdersByUserId(customer.getId()));
+		return mapOrderToOrderResponse(orderRepository.findOrdersByUserIdAndStatus(customer.getId(), orderStatus)); 
 	}
 
 	@Override
