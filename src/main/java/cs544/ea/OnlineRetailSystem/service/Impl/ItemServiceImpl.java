@@ -38,7 +38,6 @@ public class ItemServiceImpl implements ItemService {
        this.orderRepository = orderRepository;
         this.cartRepository = cartRepository;
         this.lineItemRepository = lineItemRepository;
-
         this.user = user;
     }
 
@@ -175,6 +174,13 @@ public class ItemServiceImpl implements ItemService {
     public List<Review> getReviewByItemId(Long itemId) {
         return reviewRepository.findByItemId(itemId); // Return reviews by item id
     }
+
+    @Override
+    public List<Review> getAllReviewByCustomerId() {
+        Long customerId= user.getUser().getId();
+        return reviewRepository.findByUserId(customerId);
+    }
+
 
     @Override
 
