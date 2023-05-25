@@ -51,8 +51,8 @@ public class AdminServiceImpl implements AdminService {
         return  users;    }
 
     @Override
-    public User getCustomerById(long id) {
-        return null;
+    public User getCustomerById(long id){
+        return userRepository.findById(id).orElse(null);
     }
 
     @Override

@@ -22,7 +22,7 @@ public class User {
 
 
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    @JoinColumn(name = "billingaddress")
+    @JoinColumn(name = "billingaddress" )
     private Address billingAddress;
 
 
@@ -44,4 +44,7 @@ public class User {
     @ManyToMany(fetch = FetchType.EAGER,cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<Role> role;
 
+    public Address getBillingAddress() {
+        return billingAddress;
+    }
 }

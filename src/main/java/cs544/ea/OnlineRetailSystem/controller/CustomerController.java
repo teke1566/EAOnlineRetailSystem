@@ -218,19 +218,20 @@ public class CustomerController {
     }
 
     @PutMapping("/shippingAddress/{shippingAddressId}")
-    public Address updateShippingAddress(@PathVariable Long shippingAddressId, @RequestBody Address address) {
-        return customerService.updateShippingAddress(shippingAddressId, address);
+    public ResponseEntity<?> updateShippingAddress(@PathVariable Long shippingAddressId, @RequestBody Address address) {
+        //   return customerService.updateShippingAddress(shippingAddressId, address);
+        try {
+            Address updateShippingAddress = customerService.updateShippingAddress(shippingAddressId, address);
+            return new ResponseEntity<>(updateShippingAddress, HttpStatus.OK);
+        } catch (EntityNotFoundException e) {
+            return new ResponseEntity<>(new CustomErrorType(e.getMessage()), HttpStatus.NOT_FOUND);
+        }
     }
 
     @DeleteMapping("/shippingAddress/{shippingAddressId}")
     public void deleteShippingAddress(@PathVariable Long shippingAddressId) {
         customerService.deleteShippingAddressById(shippingAddressId);
     }
-
-//    @GetMapping("/shippingAddresses")
-//    public List<Address> getAllShippingAddresses() {
-//        return customerService.getAllShippingAddress();
-//    }
 
     // Billing Address:
 
@@ -240,33 +241,22 @@ public class CustomerController {
     }
 
     @PutMapping("/billingAddress/{billingAddressId}")
-    public Address updateBillingAddress(@PathVariable Long billingAddressId, @RequestBody Address address) {
-        return customerService.updateBillingAddress(billingAddressId, address);
+    public ResponseEntity<?> updateBillingAddress(@PathVariable Long billingAddressId, @RequestBody Address address) {
+        try {
+            Address updatedBillingAddress = customerService.updateBillingAddress(billingAddressId, address);
+            return new ResponseEntity<>(updatedBillingAddress, HttpStatus.OK);
+        } catch (EntityNotFoundException e) {
+            return new ResponseEntity<>(new CustomErrorType(e.getMessage()), HttpStatus.NOT_FOUND);
+        }
     }
+
 
     @DeleteMapping("/billingAddress/{billingAddressId}")
     public void deleteBillingAddress(@PathVariable Long billingAddressId) {
         customerService.deleteBillingAddressById(billingAddressId);
     }
 
-//    @GetMapping("/billingAddresses")
-//    public List<Address> getAllBillingAddresses() {
-//        return customerService.getAllBillingAddress();
-//    }
-//
 
-
-    //    @DeleteMapping("/{customerId}")//working
-//    public void deleteCustomer(@PathVariable Long customerId) throws Exception {
-//        customerService.deleteCustomerById(customerId);
-//    }
-
-
-    //CreditCard:
-//    @GetMapping("/credit-cards")// working....get all credit card
-//    public List<CreditCard> getAllCreditCards(){
-//        return customerService.getAllCreditCards();
-//    }
 
 
 }
