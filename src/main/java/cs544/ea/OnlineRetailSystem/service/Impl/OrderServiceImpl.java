@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Service;
 
 import cs544.ea.OnlineRetailSystem.domain.Item;
@@ -25,13 +26,13 @@ public class OrderServiceImpl implements OrderService {
 	
 	@Autowired
 	private GetUser getUser;
-	
+
 	@Autowired
 	private OrderRepository orderRepository;
 	
 	@Autowired
 	private ItemRepository itemRepository;
-	
+
 //	@Autowired
 //	private JmsTemplate jmsTemplate;// used to send a message to the JMS queue when an order is placed
 
@@ -46,6 +47,7 @@ public class OrderServiceImpl implements OrderService {
 				.map(order -> mapper.map(order, OrderResponse.class))
 				.toList();
 	}
+
 	
 	private OrderStatus getOrderStatus(String status) {
 		OrderStatus orderStatus = null;
@@ -71,36 +73,57 @@ public class OrderServiceImpl implements OrderService {
 		}
 		return orderStatus;
 	}
-	
+
 	@Override
-	public List<OrderResponse> getAllOrders() {
+	public List<OrderResponse> getAllOrders(OrderStatus orderStatus) {
+		if (orderStatus != null) {
+			return mapOrderToOrderResponse(orderRepository.findOrdersByStatus(orderStatus));
+		}
 		return mapOrderToOrderResponse(orderRepository.findAll());
 	}
 
+
 	@Override
 	public OrderResponse getOrderById(Long orderId) {
-		return mapper.map(orderRepository.findById(orderId), OrderResponse.class);
+		Order order = orderRepository.findById(orderId)
+				.orElseThrow(() -> new EntityNotFoundException("Order not found"));
+		return mapper.map(order, OrderResponse.class);
 	}
-
-	@Override
-	public List<OrderResponse> getOrdersByStatus(String orderStatus) {
-		return mapOrderToOrderResponse(orderRepository.findOrdersByStatus(getOrderStatus(orderStatus)));
-	}
-
-	@Override
-	public void deleteOrderById(Long orderId) {
-		orderRepository.deleteById(orderId);
-	}
-	
 	@Override
 	public OrderResponse updateOrderStatus(Long orderId, OrderStatus orderStatus) {
 		Order order = orderRepository.findById(orderId).orElseThrow(() -> new EntityNotFoundException("Order not found"));
 		order.setStatus(orderStatus);
 		return mapper.map(orderRepository.save(order), OrderResponse.class);
 	}
-	
+
 	@Override
+	public List<OrderResponse> getOrdersByStatus(OrderStatus orderStatus) {
+		return mapOrderToOrderResponse(orderRepository.findOrdersByStatus(getOrderStatus(String.valueOf(orderStatus))));
+	}
+
+	@Override
+	public void deleteOrderById(Long orderId) {
+		orderRepository.deleteById(orderId);
+	}
+
+//	@Override
+//	public OrderResponse updateOrderStatus(Long orderId, OrderStatus orderStatus) {
+//		Order order = orderRepository.findById(orderId).orElseThrow(() -> new EntityNotFoundException("Order not found"));
+//		order.setStatus(orderStatus);
+//		return mapper.map(orderRepository.save(order), OrderResponse.class);
+//	}
+
+	@Override
+
 	public List<OrderResponse> getCustomerAllOrders(String status) {
+
+		User customer = getUser.getUser();
+		return mapOrderToOrderResponse(orderRepository.findOrdersByUserId(customer.getId()));
+	}
+
+	@Override
+	public List<OrderResponse> getCustomerOrderByStatus(String orderStatus) {
+
 		User customer = getUser.getUser();
 		OrderStatus orderStatus = getOrderStatus(status);
 		if (orderStatus == null)
@@ -131,7 +154,7 @@ public class OrderServiceImpl implements OrderService {
 			order.setStatus(OrderStatus.PLACED);
 
 			// send a message to the "OrderPlacedQueue" queue with the order ID
-			
+
 //			 sendOrderPlacedMessage(order);
 
 			return mapper.map(orderRepository.save(order), OrderResponse.class);

@@ -49,15 +49,15 @@ VALUES ('CUSTOMER');
 --        (24, 'customer2', 'Naod@example.com', 'Customer', 'User', 'customer123', 7);
 
 -- Insert data into 'address' table
-INSERT INTO address (id, addressType, street, city, state, zipCode, country)
-VALUES (1, 'SHIPPING', '123 Main St', 'New York', 'NY', '10001', 'USA'),
-       (2, 'BILLING', '456 Elm St', 'Los Angeles', 'CA', '90001', 'USA'),
-       (3, 'SHIPPING', '789 Pine St', 'Chicago', 'IL', '60601', 'USA'),
-       (4, 'BILLING', '321 Oak St', 'Houston', 'TX', '77001', 'USA'),
-       (5, 'SHIPPING', '322 Oak St', 'Houston', 'TX', '77001', 'USA'),
-       (6, 'SHIPPING', '323 Oak St', 'Houston', 'TX', '77001', 'USA'),
-       (7, 'SHIPPING', '324 Oak St', 'Houston', 'TX', '77001', 'USA'),
-       (8, 'SHIPPING', '654 Cedar St', 'Philadelphia', 'PA', '19019', 'USA');
+INSERT INTO address (addressType, street, city, state, zipCode, country)
+VALUES ( 'SHIPPING', '123 Main St', 'New York', 'NY', '10001', 'USA'),
+       ( 'BILLING', '456 Elm St', 'Los Angeles', 'CA', '90001', 'USA'),
+       ( 'SHIPPING', '789 Pine St', 'Chicago', 'IL', '60601', 'USA'),
+       ( 'BILLING', '321 Oak St', 'Houston', 'TX', '77001', 'USA'),
+       ('SHIPPING', '322 Oak St', 'Houston', 'TX', '77001', 'USA'),
+       ( 'SHIPPING', '323 Oak St', 'Houston', 'TX', '77001', 'USA'),
+       ( 'SHIPPING', '324 Oak St', 'Houston', 'TX', '77001', 'USA'),
+       ('SHIPPING', '654 Cedar St', 'Philadelphia', 'PA', '19019', 'USA');
 
 -- Insert data into 'users' table
 INSERT INTO users (id, name, email, firstName, lastName, password, billingAddress, defaultShippingAddress)
@@ -117,21 +117,21 @@ VALUES (1, 20),
 
 
 -- Item
-INSERT INTO item (itemId, name, description, price, image, barcode, quantityinstock, merchant)
-VALUES (1, 'Item 1', 'Description 1', 100, 'Image 1', '123456789012', 10, 23),
-       (2, 'Item 2', 'Description 2', 200, 'Image 2', '234567890123', 20, 23),
-       (3, 'Item 3', 'Description 3', 300, 'Image 3', '345678901234', 30, 23),
-       (4, 'Item 4', 'Description 4', 400, 'Image 4', '456789012345', 40, 23),
-       (5, 'Item 5', 'Description 5', 500, 'Image 5', '567890123456', 50, 23);
+INSERT INTO item ( name, description, price, image, barcode, quantityinstock, merchant)
+VALUES ( 'Item 1', 'Description 1', 100, 'Image 1', '123456789012', 10, 23),
+       ( 'Item 2', 'Description 2', 200, 'Image 2', '234567890123', 20, 23),
+       ( 'Item 3', 'Description 3', 300, 'Image 3', '345678901234', 30, 23),
+       ( 'Item 4', 'Description 4', 400, 'Image 4', '456789012345', 40, 23),
+       ( 'Item 5', 'Description 5', 500, 'Image 5', '567890123456', 50, 23);
 
 
 -- CreditCard
-INSERT INTO creditcard (creditCardId, cardNumber, expirationDate, securityCode, balance, user_id)
-VALUES (1, '4111111111111111', '2025-12-31', '123', 5000, 20),
-       (2, '5500000000000004', '2026-12-31', '456', 3000, 20),
-       (3, '340000000000009', '2027-12-31', '789', 7000, 21),
-       (4, '6011000000000004', '2024-12-31', '321', 6000, 21),
-       (5, '30000000000004', '2028-12-31', '654', 8000, 24);
+INSERT INTO creditcard (cardNumber, expirationDate, securityCode, balance, user_id)
+VALUES ( '4111111111111111', '2025-12-31', '123', 5000, 20),
+       ( '5500000000000004', '2026-12-31', '456', 3000, 20),
+       ( '340000000000009', '2027-12-31', '789', 7000, 21),
+       ( '6011000000000004', '2024-12-31', '321', 6000, 21),
+       ( '30000000000004', '2028-12-31', '654', 8000, 24);
 
 
 -- LineItem
@@ -153,9 +153,9 @@ VALUES (1, 20, 1, 'DELIVERED', '2023-05-20 10:00:00'),
 
 
 -- Review
-INSERT INTO review (reviewId, title, description, numberOfStars, reviewDate, buyer, itmeId)
-VALUES (1, 'Great Product', 'I loved it!', 5, '2023-05-21 15:00:00', 20, 1),
-       (2, 'Decent', 'Could be better', 3, '2023-05-22 16:00:00', 21, 2),
-       (3, 'Fantastic', 'Exceeds expectations', 5, '2023-05-23 17:00:00', 24, 3),
-       (4, 'Bad Product', 'I hate it!', 1, '2023-05-24 18:00:00', 20, 4),
-       (5, 'Average', 'Met expectations', 3, '2023-05-25 19:00:00', 21, 5);
+INSERT INTO review (title, description, numberOfStars, reviewDate, buyer, itmeId)
+VALUES ( 'Great Product', 'I loved it!', 5, '2023-05-21 15:00:00', 20, 1),
+       ( 'Decent', 'Could be better', 3, '2023-05-22 16:00:00', 21, 2),
+       ( 'Fantastic', 'Exceeds expectations', 5, '2023-05-23 17:00:00', 24, 3),
+       ( 'Bad Product', 'I hate it!', 1, '2023-05-24 18:00:00', 20, 4),
+       ( 'Average', 'Met expectations', 3, '2023-05-25 19:00:00', 21, 5);
