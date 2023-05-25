@@ -19,7 +19,7 @@ public class Cart {
 	@Column(name = "cartid")
 	private Long id;
 	
-	@OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+	@OneToOne(cascade = {CascadeType.ALL})
 	@JoinColumn(name = "customer")
 	private User customer;
 

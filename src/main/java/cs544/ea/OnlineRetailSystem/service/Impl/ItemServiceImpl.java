@@ -2,12 +2,10 @@ package cs544.ea.OnlineRetailSystem.service.Impl;
 
 import cs544.ea.OnlineRetailSystem.domain.*;
 import cs544.ea.OnlineRetailSystem.helper.GetUser;
-import cs544.ea.OnlineRetailSystem.repository.ItemRepository;
-import cs544.ea.OnlineRetailSystem.repository.OrderRepository;
-import cs544.ea.OnlineRetailSystem.repository.UserRepository;
+import cs544.ea.OnlineRetailSystem.repository.*;
 import cs544.ea.OnlineRetailSystem.service.ItemService;
-import cs544.ea.OnlineRetailSystem.repository.ReviewRepository;
 import cs544.ea.OnlineRetailSystem.service.PublicService;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,14 +24,20 @@ public class ItemServiceImpl implements ItemService {
     private final UserRepository userRepository;
 
     private final OrderRepository orderRepository;
+
+    private final CartRepository cartRepository;
+
+    private final LineItemRepository lineItemRepository; //the resone I inject this is I need to use the deleteItemIn LineItem repository
     private final GetUser user;
     @Autowired
-    public ItemServiceImpl(ItemRepository itemRepository, ReviewRepository reviewRepository, PublicService publicService, UserRepository userRepository, OrderRepository orderRepository, GetUser user) {
+    public ItemServiceImpl(ItemRepository itemRepository, ReviewRepository reviewRepository, PublicService publicService, UserRepository userRepository, OrderRepository orderRepository, CartRepository cartRepository, LineItemRepository lineItemRepository, GetUser user) {
         this.itemRepository = itemRepository;
         this.reviewRepository = reviewRepository;
         this.publicService = publicService;
         this.userRepository = userRepository;
        this.orderRepository = orderRepository;
+        this.cartRepository = cartRepository;
+        this.lineItemRepository = lineItemRepository;
         this.user = user;
     }
 
@@ -78,12 +82,60 @@ public class ItemServiceImpl implements ItemService {
                 }).orElseThrow(()-> new IllegalArgumentException("Item not found"));
     }
 
-    @Override
-    public void deleteItem(Long itemId) {
-        Item item = getItemById(itemId);
-        itemRepository.delete(item);
+//    @Override
+//    public void deleteItem(Long itemId) {
+//
+//        // Check if the item still exists before deletion
+//        boolean itemExists = itemRepository.existsById(itemId);
+//
+//        if (!itemExists) {
+//            throw new IllegalArgumentException("Item not found with ID: " + itemId);
+//        }
+//
+//        // Check if the item is referenced in any carts
+//        List<Cart> cartsWithItem = cartRepository.findByItemId(itemId);
+//        if (!cartsWithItem.isEmpty()) {
+//            for (Cart cart : cartsWithItem) {
+//                List<LineItem> lineItems = cart.getLineItems();
+//                lineItems.removeIf(lineItem -> lineItem.getItem().getItemId().equals(itemId));
+//                cart.setLineItems(lineItems);
+//            }
+//            cartRepository.saveAll(cartsWithItem);
+//        }
+//
+//        // Delete the item
+//        itemRepository.deleteById(itemId);
+//    }
 
+    @Override
+    @Transactional // the method should be executed with in the transaction
+    public void deleteItem(Long itemId) {
+        // Check if the item exists
+        if (!itemRepository.existsById(itemId)) {
+            throw new IllegalArgumentException("Item not found with ID: " + itemId);
+        }
+
+        // Delete the line items associated with the item
+        lineItemRepository.deleteByItemId(itemId);
+
+        // Delete the item
+        itemRepository.deleteById(itemId);
+
+        // Check if the item is still present after deletion
+        boolean itemExists = itemRepository.existsById(itemId);
+
+        // Check the deletion status
+        if (!itemExists) {
+            System.out.println("Item with ID " + itemId + " has been successfully deleted.");
+        } else {
+            System.out.println("Failed to delete item with ID " + itemId + ".");
+        }
     }
+
+
+
+
+
 
     @Override
     public List<Item> searchItemByName(String keyword) {
