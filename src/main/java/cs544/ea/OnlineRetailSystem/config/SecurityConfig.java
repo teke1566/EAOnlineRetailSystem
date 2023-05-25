@@ -54,6 +54,7 @@ public class SecurityConfig {
 
 
                 .requestMatchers("/api/v1/authenticate/**").permitAll()
+                //.requestMatchers("/api/v1/customers/**").permitAll()     //temporarily
                 .requestMatchers("/api/v1/customers/**").hasAnyAuthority(Roles.CUSTOMER.name())
                 .requestMatchers("/api/v1/items/**").hasAnyAuthority(Roles.MERCHANT.name())
                 .requestMatchers("/api/v1/admin/**").hasAnyAuthority(Roles.ADMIN.name())
