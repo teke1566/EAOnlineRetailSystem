@@ -45,12 +45,11 @@ public class Order {
 	private LocalDateTime orderDate;
 
 	@OneToMany(cascade = CascadeType.ALL)
-	@JoinColumn(name = "orderid")
 	private List<LineItem> lineItems;
   
 	public Order(User customer) {
 		this.setCustomer(customer);
-		this.setShippingAddress(null); //call customer.getDefaultShippingAddress()
+		this.setShippingAddress(customer.getDefaultShippingAddress());
 		this.setStatus(OrderStatus.NEW);
 		this.setOrderDate(LocalDateTime.now());
 		this.setLineItems(new ArrayList<LineItem>());
@@ -62,6 +61,9 @@ public class Order {
 		}
 		return false;
 	}
-
-
+	
+	public void addLineItem(LineItem lineItem) {
+		this.lineItems.add(lineItem);
+	}
+	
 }

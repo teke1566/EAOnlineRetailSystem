@@ -26,9 +26,6 @@ public interface CustomerService {
 //    public CreditCard addCreditCard(CreditCard creditCard);
     public CreditCard getCreditCardById(Long creditCardId);
 
-    public void deleteCreditCardById(Long creditCardId);
-
-    public CreditCard updateCreditCard(Long creditCardId, CreditCard creditCard);
 
     public List<CreditCard> getAllCreditCards();
 
@@ -50,6 +47,9 @@ public interface CustomerService {
 
     public Address updateBillingAddress(Long billingAddressId, Address address);
     public  List<Address> getAllBillingAddress();
+    //public Boolean isCurrentUser();
+
+
 
 
 }

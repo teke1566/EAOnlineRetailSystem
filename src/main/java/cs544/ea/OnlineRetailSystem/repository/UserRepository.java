@@ -1,8 +1,6 @@
 package cs544.ea.OnlineRetailSystem.repository;
 
-import cs544.ea.OnlineRetailSystem.domain.Role;
-import cs544.ea.OnlineRetailSystem.domain.Roles;
-import cs544.ea.OnlineRetailSystem.domain.User;
+import cs544.ea.OnlineRetailSystem.domain.*;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -23,4 +21,14 @@ public interface UserRepository extends JpaRepository<User,Long> {
 
     @Query("select u from User u where u.email=:email")
     User findUserByEmailAddress(String email);
+
+    boolean existsByEmail(String email);
+    User findByShippingAddresses(Address address);
+    List<User> findByBillingAddress(Address billingAddress);
+
+
+    @Query("select c from User u join u.creditCards c where u.id=:customerId")
+    List<CreditCard> findCreditCardByCustomerId(@Param("customerId") Long customerId);
+
+
 }

@@ -13,13 +13,20 @@ public interface PublicService {
     public Address addShippingAddress(Address address); //will be accessed by customer and merchant
     public Address addBillingAddress(Address address); //will be accessed by customer and merchant
 
-    public CreditCard addCreditCard(CreditCard creditCard); // will be accessed by customer and merchant
+    public List<CreditCard> addCreditCard(CreditCard creditCard); // will be accessed by customer and merchant
+    //public void deleteCreditCardById(Long creditCardId);
+
+    public CreditCard updateCreditCardById(Long creditCardId, CreditCard creditCard);
+    public List<CreditCard> getCreditCardByUserId();
+
     public User updateCustomer(User user);// will be accessed by customer and admin
-    public void deleteCreditCard(Long creditCardId);// will be accessed by customer and merchant
+    public void deleteCreditCardById(Long creditCardId);// will be accessed by customer and merchant
     public void deleteBillingAddressById(Long billingAddressId);//will be accessed by customer and merchant
     public Address updateBillingAddress(Long billingAddressId, Address address);//will be accessed by customer and merchant
     public Address updateShippingAddress(Long shippingAddressId, Address address);//will be accessed by customer and merchant
 
     public List<Order> getAllOrderByUserId();// will be accessed by customer and merchant
     public List<Order> getOrderByItemId(Long itemId); //will be accessed by customer and merchant
+
+    public Order getOrderByOrderId(Long orderId);
 }

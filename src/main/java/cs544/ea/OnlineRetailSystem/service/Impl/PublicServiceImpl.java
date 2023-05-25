@@ -4,10 +4,11 @@ import cs544.ea.OnlineRetailSystem.domain.*;
 import cs544.ea.OnlineRetailSystem.helper.GetUser;
 import cs544.ea.OnlineRetailSystem.repository.*;
 import cs544.ea.OnlineRetailSystem.service.PublicService;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
-import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
 import org.springframework.beans.BeanUtils;
 
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -40,7 +41,11 @@ public class PublicServiceImpl implements PublicService {
 
     @Override
     public List<Item> getAllItems() {
-       // System.out.println("the current active user is :"+getUser.getUser());
+       System.out.println("the current active user is :"+getUser.getUser().getId());
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentPrincipalName = authentication.getName();
+        System.out.println("from inside: "+currentPrincipalName);
         return itemRepository.findAll();
     }
 
@@ -84,27 +89,32 @@ public class PublicServiceImpl implements PublicService {
     }
 
     @Override
-    public CreditCard addCreditCard(CreditCard creditCard) {
-        return creditCardRepository.save(creditCard);
+    @Transactional
+    public List<CreditCard> addCreditCard(CreditCard creditCard) {
+        User user = userRepository.findById(getUser.getUser().getId()).orElseThrow(() -> new EntityNotFoundException("User not found"));
+        user.getCreditCards().add(creditCard);
+        userRepository.save(user);
+        return user.getCreditCards();
+       // return creditCardRepository.save(creditCard);
     }
 
-    @Override
-    public User updateCustomer(User user) {
+    @Transactional
+    public CreditCard updateCreditCardById(Long cardId, CreditCard newCardData) {
+        Long userId=getUser.getUser().getId();
+        User user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("User not found"));
 
-        Optional<User> existingUser = userRepository.findById(getUser.getUser().getId());
-        if (existingUser.isPresent()) {
-            List<Role> roles = existingUser.get().getRole();
-            if (roles.stream().anyMatch(role -> role.getRole() == Roles.CUSTOMER)) {
-                BeanUtils.copyProperties(user, existingUser.get()); // copy properties from new to existing object, excluding id
-                return userRepository.save(existingUser.get());
-            }
-        }
-        return null;
+        CreditCard existingCard = user.getCreditCards().stream()
+                .filter(card -> card.getId().equals(cardId))
+                .findFirst()
+                .orElseThrow(() -> new EntityNotFoundException("CreditCard not found"));
+
+        BeanUtils.copyProperties(newCardData, existingCard);//will copy all non-null properties from the source bean to the target bean
+        return creditCardRepository.save(existingCard);
     }
 
     @Override
     @Transactional
-    public void deleteCreditCard(Long creditCardId) {
+    public void deleteCreditCardById(Long creditCardId) {
 
         // Check if user exists
         User user = userRepository.findById(getUser.getUser().getId())
@@ -124,6 +134,28 @@ public class PublicServiceImpl implements PublicService {
         // Remove the credit card from the user's list
         user.getCreditCards().remove(creditCardToBeDeleted);
     }
+
+    @Override
+    public List<CreditCard> getCreditCardByUserId() {
+        Long userId=getUser.getUser().getId();
+        return userRepository.findCreditCardByCustomerId(userId);
+    }
+
+
+    @Override
+    public User updateCustomer(User user) {
+
+        Optional<User> existingUser = userRepository.findById(getUser.getUser().getId());
+        if (existingUser.isPresent()) {
+            List<Role> roles = existingUser.get().getRole();
+            if (roles.stream().anyMatch(role -> role.getRole() == Roles.CUSTOMER)) {
+                BeanUtils.copyProperties(user, existingUser.get()); // copy properties from new to existing object, excluding id
+                return userRepository.save(existingUser.get());
+            }
+        }
+        return null;
+    }
+
 
     @Override
     public void deleteBillingAddressById(Long billingAddressId) {
@@ -218,5 +250,11 @@ public class PublicServiceImpl implements PublicService {
         return orderRepository.findByItemIdAndUserId(itemId, user.getId());
     }
 
+    @Override
+    public Order getOrderByOrderId(Long orderId) {
+       Long userId= getUser.getUser().getId();
+       Optional<Order> order=orderRepository.findOrderByUserIdAndOrderId(userId,orderId);
+        return order.orElse(null);
+    }
 
 }
