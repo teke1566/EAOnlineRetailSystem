@@ -105,7 +105,7 @@ VALUES (20, 1),
 
 
 -- Cart
-INSERT INTO cart (cartId, customer)
+INSERT INTO cart (cartid, customer)
 VALUES (1, 20),
        (2, 21),
        (3, 22),
@@ -135,7 +135,7 @@ VALUES ( '4111111111111111', '2025-12-31', '123', 5000, 20),
 
 
 -- LineItem
-INSERT INTO LineItem (lineItemId, itemId, quantity, discount, cart_id)
+INSERT INTO LineItem (lineItemId, itemId, quantity, discount, cartid)
 VALUES (1, 1, 2, 10, 1),
        (2, 2, 3, 15, 2),
        (3, 3, 1, 5, 3),

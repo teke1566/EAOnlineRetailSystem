@@ -6,6 +6,7 @@ import cs544.ea.OnlineRetailSystem.repository.*;
 import cs544.ea.OnlineRetailSystem.service.ItemService;
 import cs544.ea.OnlineRetailSystem.service.PublicService;
 import jakarta.transaction.Transactional;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -42,15 +43,14 @@ public class ItemServiceImpl implements ItemService {
         this.user = user;
     }
 
-//    @Override
-//    public List<Item> getAllItems() {
-//        return itemRepository.findAll();
-//    }
+
 
     @Override
     public Item getItemById(Long item) {
-        return itemRepository.findById(item).orElseThrow(()-> new IllegalArgumentException("Item not found"));
-    }//this done in publicService
+        Long userId= user.getUser().getId();
+
+        return itemRepository.findItemByItemIdAndUserId(item,userId);
+    }
 
 
     @Override
@@ -58,29 +58,35 @@ public class ItemServiceImpl implements ItemService {
 
         User merchantId = user.getUser();
 
-        // Fetch the merchant from the database using the merchantId
-        User merchant = userRepository.findById(merchantId.getId())
+
+        User merchant = userRepository.findById(merchantId.getId())// Fetch the merchant from the database using the merchantId
                 .orElseThrow(() -> new IllegalArgumentException("Merchant not found"));
 
-        // Set the merchant for the item
-        item.setMerchant(merchant);
 
-        // Save the item
-        return itemRepository.save(item);
+        item.setMerchant(merchant);// Set the merchant for the item
+
+        return itemRepository.save(item);// Save the item
+
     }
 
     @Override
+    @Transactional
     public Item updateItem(Long itemId, Item item) {
-        return itemRepository.findById(itemId)
-                .map(existingItem -> {
-                    existingItem.setName(item.getName());
-                    existingItem.setDescription(item.getDescription());
-                    existingItem.setPrice(item.getPrice());
-                    existingItem.setImage(item.getImage());
-                    existingItem.setBarcode(item.getBarcode());
-                    existingItem.setQuantityInStock(item.getQuantityInStock());
-                    return itemRepository.save(existingItem);
-                }).orElseThrow(()-> new IllegalArgumentException("Item not found"));
+        Long userId = user.getUser().getId();
+
+
+        Item existingItem=itemRepository.findItemByItemIdAndUserId(itemId, userId);
+        BeanUtils.copyProperties(item,existingItem,"id");
+        return  itemRepository.save(existingItem);
+//                .map(existingItem -> {
+//                    existingItem.setName(item.getName());
+//                    existingItem.setDescription(item.getDescription());
+//                    existingItem.setPrice(item.getPrice());
+//                    existingItem.setImage(item.getImage());
+//                    existingItem.setBarcode(item.getBarcode());
+//                    existingItem.setQuantityInStock(item.getQuantityInStock());
+//                    return itemRepository.save(existingItem);
+//                }).orElseThrow(()-> new IllegalArgumentException("Item not found"));
     }
 
     @Override
@@ -159,32 +165,40 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public List<Review> getReviewByItemId(Long itemId) {
+
         return reviewRepository.findByItemId(itemId); // Return reviews by item id
     }
 
+
     @Override
-    public List<Item> getAllItemByMerchantId(Long userId) {
+    public List<Item> getAllItemByMerchantId() {
 
         User merchant = user.getUser();
-        // Get the merchant by user ID
-        User user1 = userRepository.findById(userId).orElse(null);
+
+        User user1 = userRepository.findById(merchant.getId()).orElse(null); // Get the merchant by user ID
 
         if (user1 == null) {
             return Collections.emptyList();
         }
-
-        // Check if the user is a merchant
-        if (!user1.getRole().contains(merchant)){
+        if (!user1.getRole().contains(merchant)){// Check if the user is a merchant
             throw new IllegalArgumentException("Invalid user type. Expected Merchant.");
         }
-
-        // Retrieve the items belonging to the merchant
-        return itemRepository.findItemsByMerchantId(userId);
+        return itemRepository.findItemsByMerchantId(merchant.getId()); // Retrieve the items belonging to the merchant
     }
 
     @Override
-    public List<Order> getAllOrder(Long userId) {//to do by other
-        return null;
+    public List<Order> getAllOrderByMerchantId() {
+        Long userId = user.getUser().getId();
+
+
+     List<Item> items= itemRepository.findItemsByMerchantId(userId);
+
+        List<Order> orderList = null;
+
+        for (Item item:items){
+            orderList=orderRepository.findOrdersByStatusAndMerchantIdNotEqual(item.getItemId(),OrderStatus.NEW);
+            }
+        return orderList ;
     }
 
     @Override
@@ -199,11 +213,14 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
+    public List<Review> getReviewsByItemIdAndMerchantId(Long userId, Long itemId) {
+        return itemRepository.getReviewsByItemIdAndMerchantId(userId, itemId);
+
+    }
+
+    @Override
     public List<Item> getAllItems() {
         return itemRepository.findAll();
     }
 
-    public List<Item> searchItems(String keyword) {
-        return itemRepository.findByNameContainingIgnoreCase(keyword);
-    }
 }

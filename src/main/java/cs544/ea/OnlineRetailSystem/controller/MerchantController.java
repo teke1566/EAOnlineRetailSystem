@@ -1,6 +1,7 @@
 package cs544.ea.OnlineRetailSystem.controller;
 
 import cs544.ea.OnlineRetailSystem.domain.Item;
+import cs544.ea.OnlineRetailSystem.domain.Order;
 import cs544.ea.OnlineRetailSystem.domain.Review;
 import cs544.ea.OnlineRetailSystem.service.CustomerService;
 import cs544.ea.OnlineRetailSystem.service.ItemService;
@@ -77,11 +78,11 @@ public class MerchantController {
         return itemService.getReviewByItemId(itemId);
     }
 
-    @GetMapping("/{userId}/items")
-    public ResponseEntity<List<Item>> getAllItemsByMerchantId(@PathVariable("userId") Long userId) {
+    @GetMapping("/{userId}/merchantId")
+    public ResponseEntity<List<Order>> getAllOrdersByMerchantId(@PathVariable String userId) {
         try {
-            List<Item> items = itemService.getAllItemByMerchantId(userId);
-            return ResponseEntity.ok(items);
+            List<Order> orders = itemService.getAllOrderByMerchantId();
+            return ResponseEntity.ok(orders);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(null);
         }

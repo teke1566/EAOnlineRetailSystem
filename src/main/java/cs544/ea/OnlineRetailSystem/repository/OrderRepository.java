@@ -44,4 +44,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 	@Query("select o from Order o where o.customer.id=:customerId")
 	List<Order> getOrderByCustomerId(Long customerId);
 
+	@Query("select o from  Order o join o.lineItems l where l.item.itemId=:itemId AND o.status!=:orderStatus")
+	List<Order> findOrdersByStatusAndMerchantIdNotEqual(Long itemId, OrderStatus orderStatus);
+
 }

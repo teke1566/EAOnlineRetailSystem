@@ -122,13 +122,18 @@ public class OrderServiceImpl implements OrderService {
 	}
 
 	@Override
+	public List<OrderResponse> getCustomerAllOrders() {
+		return null;
+	}
+
+	@Override
 	public List<OrderResponse> getCustomerOrderByStatus(String orderStatus) {
 
 		User customer = getUser.getUser();
-		OrderStatus orderStatus = getOrderStatus(status);
-		if (orderStatus == null)
+		OrderStatus orderStatus1 = getOrderStatus(orderStatus);
+		if (orderStatus1 == null)
 			return mapOrderToOrderResponse(orderRepository.findOrdersByUserId(customer.getId()));
-		return mapOrderToOrderResponse(orderRepository.findOrdersByUserIdAndStatus(customer.getId(), orderStatus)); 
+		return mapOrderToOrderResponse(orderRepository.findOrdersByUserIdAndStatus(customer.getId(), orderStatus1));
 	}
 
 	@Override

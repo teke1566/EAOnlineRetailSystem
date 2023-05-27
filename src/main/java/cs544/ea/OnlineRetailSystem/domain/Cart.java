@@ -25,7 +25,7 @@ public class Cart {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "cartId")
+	@Column(name = "cartid")
 	private Long id;
 	
 	@OneToOne(cascade = {CascadeType.ALL})

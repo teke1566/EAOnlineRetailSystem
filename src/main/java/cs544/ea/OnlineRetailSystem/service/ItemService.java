@@ -24,9 +24,12 @@ public interface ItemService  {
 
     List<Review> getAllReviewByCustomerId();
 
-    List<Item> getAllItemByMerchantId(Long userId);//not to do that
+    List<Review> getReviewsByItemIdAndMerchantId(Long userId, Long itemId);
 
-    List<Order> getAllOrder(Long userId);//to do
+
+    List<Item> getAllItemByMerchantId();
+
+    List<Order> getAllOrderByMerchantId();//to do
 
     public Order getOrderById(Long id);//it will return the //
 
